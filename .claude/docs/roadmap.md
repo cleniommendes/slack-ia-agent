@@ -5,7 +5,7 @@
 As funcionalidades a desenvolver, a ordem entre elas e o status de cada uma. O objetivo de cada
 fase e o critério para passar de uma a outra estão no [product brief](product-brief.md), seção
 "Roadmap". O que é uma funcionalidade, a pasta dela e quando cada status muda estão no
-[`AGENTS.md`](../AGENTS.md), seção "Planejamento".
+[`AGENTS.md`](../../AGENTS.md), seção "Planejamento".
 
 **Status:** planejada → PRD pronto → spec pronta → em andamento → concluída.
 
@@ -17,7 +17,7 @@ O ID vira link para a pasta da funcionalidade, em `docs/funcionalidades/`, quand
 
 | ID | Funcionalidade | Ao final a pessoa consegue | Depende de | Status |
 | --- | --- | --- | --- | --- |
-| [F01](funcionalidades/01-login-e-sessao/) | Login e sessão | Entrar com e-mail e senha numa conta criada pela empresa, continuar logada em todas as abas do navegador e sair. | — | em andamento |
+| [F01](funcionalidades/01-login-e-sessao/) | Login e sessão | Entrar com e-mail e senha numa conta criada pela empresa, continuar logada em todas as abas do navegador e sair. | — | spec pronta |
 | F02 | Mensagens em canal público | Abrir um canal público, enviar mensagens e rolar o histórico até as mais antigas. | F01 | planejada |
 | F03 | Tempo real | Ver as mensagens dos outros chegarem sem recarregar a página, ver quem está digitando e não perder nada depois de uma queda de conexão. | F02 | planejada |
 | F04 | Criação de canais e convite para canal privado | Criar um canal público ou privado e convidar pessoas para o privado, que só os convidados veem. | F02 | planejada |
