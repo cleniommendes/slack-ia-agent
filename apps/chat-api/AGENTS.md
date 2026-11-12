@@ -1,33 +1,155 @@
-# AGENTS.md
+# AGENTS.md · API do chat
 
-## NestJS
+A API do chat guarda pessoas, sessões, canais, mensagens, tarefas, notificações e permissões, e
+serve o REST e o WebSocket. As regras gerais do projeto estão no [`AGENTS.md` da raiz](../../AGENTS.md);
+aqui ficam só as da API.
 
-This app's version of NestJS is likely newer than what you know. https://docs.nestjs.com/llms.txt indexes its documentation, with a markdown page per chapter.
+**Situação:** esqueleto do Nest CLI. A base (configuração, banco, erros, testes) é a tarefa
+[F01-T01](../../.claude/docs/funcionalidades/01-login-e-sessao/tarefas/01-base-da-api-do-chat/tarefa.md).
+Antes de implementar, leia a tarefa e o `plano.md` dela.
 
-Nest has first-party packages for these, so check them before adding another library or writing your own:
+## Stack
 
-- Databases: [`@nestjs/typeorm`](https://docs.nestjs.com/data/typeorm.md), [`@nestjs/drizzle`](https://docs.nestjs.com/data/drizzle.md), [`@nestjs/mongoose`](https://docs.nestjs.com/data/mongodb.md), [`@nestjs/sequelize`](https://docs.nestjs.com/data/sequelize.md).
-- OpenAPI: [`@nestjs/swagger`](https://docs.nestjs.com/openapi/introduction.md). GraphQL: [`@nestjs/graphql`](https://docs.nestjs.com/graphql/quick-start.md). WebSockets: [`@nestjs/websockets`](https://docs.nestjs.com/websockets/gateways.md). Microservices: [`@nestjs/microservices`](https://docs.nestjs.com/microservices/basics.md).
-- Sign-in: [`@nestjs/authentication`](https://docs.nestjs.com/security/authentication.md). Permissions: [`@nestjs/authorization`](https://docs.nestjs.com/security/authorization.md). Rate limiting: [`@nestjs/throttler`](https://docs.nestjs.com/security/rate-limiting.md).
-- Configuration: [`@nestjs/config`](https://docs.nestjs.com/application/configuration.md). Caching: [`@nestjs/cache-manager`](https://docs.nestjs.com/data/caching.md). Health checks: [`@nestjs/terminus`](https://docs.nestjs.com/reliability/terminus.md). Events inside the app: [`@nestjs/event-emitter`](https://docs.nestjs.com/application/events.md).
-- Email: [`@nestjs/mail`](https://docs.nestjs.com/application/mail.md). Files, S3 included: [`@nestjs/storage`](https://docs.nestjs.com/application/file-storage.md). Translations: [`@nestjs/i18n`](https://docs.nestjs.com/application/i18n.md).
-- Retries, timeouts and circuit breakers: [`@nestjs/resilience`](https://docs.nestjs.com/reliability/resilience.md).
-- Idempotency keys: [`@nestjs/idempotency`](https://docs.nestjs.com/reliability/idempotency.md). Transactional outbox: [`@nestjs/outbox`](https://docs.nestjs.com/reliability/outbox.md). Sending and receiving webhooks: [`@nestjs/webhooks`](https://docs.nestjs.com/http/webhooks.md).
-- Queues: [`@nestjs/bullmq`](https://docs.nestjs.com/application/queues.md). Scheduled jobs: [`@nestjs/schedule`](https://docs.nestjs.com/application/task-scheduling.md).
-- Running a scheduled job on one instance, and locks: [`@nestjs/locks`](https://docs.nestjs.com/reliability/locks.md). Processes that take days: [`@nestjs/workflows`](https://docs.nestjs.com/reliability/workflows.md).
-- Language models, tools and agents: [`@nestjs/ai`](https://docs.nestjs.com/ai/overview.md). MCP servers: [`@nestjs/mcp`](https://docs.nestjs.com/mcp/overview.md).
+| Papel | Escolha | Situação |
+| --- | --- | --- |
+| Framework | NestJS 12, ESM, sobre Express | instalado |
+| Linguagem | TypeScript 6, `strict` | instalado |
+| Testes | Vitest (`vitest.config.ts` e `vitest.config.e2e.ts`) e Supertest | instalado |
+| Lint e formato | oxlint (`--type-aware`) e Prettier | instalado |
+| Configuração | `@nestjs/config` com schema zod | planejada (T01) |
+| Banco | TypeORM + `pg`, `typeorm-naming-strategies` | planejada (T01) |
+| Validação de entrada | `class-validator` e `class-transformer` no `ValidationPipe` | planejada (T01) |
+| Contrato REST | `@nestjs/swagger`, snapshot em `openapi.json` | planejada |
+| Tempo real | Socket.IO | planejada (F03) |
+| Hash de senha | Argon2id | planejada (F01) |
 
-Validation works with Zod, Valibot, ArkType or any other Standard Schema library, with no classes or decorator metadata: `StandardSchemaValidationPipe` with `@Body({ schema })` or `@Param('id', { schema })` (https://docs.nestjs.com/application/validation.md). `class-validator` still works, through `ValidationPipe`.
+O plano da T01 foi escrito para Jest e ESLint, e o CLI gerou Vitest e oxlint. A escolha fica
+para o início da T01; até lá, não troque as ferramentas.
 
-`NodeAdapter` from `@nestjs/platform-node` is the fastest HTTP adapter, ahead of Fastify (https://docs.nestjs.com/http/performance.md).
+## NestJS desta versão
 
-Nest's packages are ESM only, and this project is ESM too: relative imports end in `.js`, `__dirname` doesn't exist (use `import.meta.dirname`), and tests run on Vitest, so mocks are `vi.fn()`, not `jest.fn()`.
+- A versão do Nest é mais nova que o seu treino. A documentação está indexada em
+  <https://docs.nestjs.com/llms.txt>, com uma página em markdown por capítulo. Leia antes de
+  usar uma API que você não tem certeza de que existe.
+- **ESM:** imports relativos terminam em `.js`, `__dirname` não existe (use
+  `import.meta.dirname`), e os mocks são `vi.fn()`, não `jest.fn()`.
+- Antes de instalar uma biblioteca ou escrever a sua, veja se o Nest tem pacote oficial
+  (`@nestjs/typeorm`, `@nestjs/config`, `@nestjs/swagger`, `@nestjs/websockets`,
+  `@nestjs/throttler` e outros, listados no índice da documentação).
+- **Validação é com `class-validator`**, no `ValidationPipe`, e não com zod no
+  `StandardSchemaValidationPipe`. O `@nestjs/swagger` lê os mesmos decorators para gerar o
+  contrato (LLD, "Estrutura do código"). O zod fica só no schema das variáveis de ambiente.
 
-## Production data: NestJS Observe
+## Comandos
 
-This app's production telemetry - traces, errors, logs and metrics - goes to [NestJS Observe](https://observe.nestjs.com). Until `ObserveModule` is registered in `src/app.module.ts`, nothing is sent: `npx @nestjs/observe link` sets it up in one step - it installs `@nestjs/observe`, wires it into the app, and writes the key pair (`OBSERVE_APP_KEY`, `OBSERVE_APP_SECRET`) to `.env`.
+Rode dentro do contêiner, a partir da raiz do repositório: `docker compose exec chat-api <comando>`.
 
-When a task depends on how the app behaves in production - an error users hit, a slow endpoint, a failing job, whether a release made things worse - work from that data, not from the code alone:
+| Comando | O que faz |
+| --- | --- |
+| `pnpm start:dev` | Sobe a API com recarga, em <http://localhost:3001> no host |
+| `pnpm build` | Compila para `dist/` |
+| `pnpm lint` | oxlint com checagem de tipos |
+| `pnpm exec tsc --noEmit` | Confere os tipos |
+| `pnpm format` | Prettier em `src/` e `test/` |
+| `pnpm test` | Testes de unidade (`src/**/*.spec.ts`) |
+| `pnpm test:e2e` | Testes de ponta a ponta (`test/**/*.e2e-spec.ts`) |
+| `pnpm add <pacote>` | Instala uma dependência; nunca pelo host nem com `npm` |
 
-- The Observe MCP server answers those questions directly: errors with their traces and logs, slow operations, jobs, and what a release changed (`find_regressions`, `diff_release`). It is included on the Pro plan and above. In Claude Code: `claude mcp add observe --transport http https://observe-api.nestjs.com/mcp`, and the client opens a browser to approve. Other clients: https://www.observe.nestjs.com/documentation/mcp
-- Without it, the user can open the request or error in the Observe dashboard and click **Copy agent prompt**, which hands over that page's trace, stack and logs as text.
+Entram depois: `migration:generate migrations/<Nome>`, `migration:run` e `migration:revert`
+(T01); `test:int` (T01); o comando de contas (F01-T03, abaixo).
+
+## Estrutura de pastas
+
+```
+apps/chat-api/
+  src/
+    main.ts             sobe a aplicação; chama configureApp e lê a porta pelo ConfigService
+    app.module.ts       módulo raiz: importa os módulos e registra filter e pipe globais
+    app.setup.ts        configureApp(app): prefixo /v1; usado pelo main.ts e pelos testes
+    config/             único lugar que lê process.env (schema zod)
+    database/           opções do TypeORM, DataSource da CLI e entidade base
+    common/errors/      DomainError, ErrorCode e o filter de problem+json
+    <domínio>/          um módulo Nest por domínio (people, sessions, ...)
+  migrations/           migrações do TypeORM, fora de src/
+  test/                 testes e2e e a base em test/support/
+```
+
+Só `src/main.ts`, `src/app.module.ts` e as pastas de teste existem hoje; o resto chega com a T01
+e com cada funcionalidade. Os módulos de domínio ainda estão a definir no LLD.
+
+## Regras da API
+
+**Rotas e contrato**
+- Todas as rotas ficam sob `/v1`, aplicado por `configureApp`, e não no `main.ts`.
+- Campos do JSON em `snake_case`, na entrada e na saída.
+- A autenticação lê a Sessão do cookie de sessão que o BFF repassa, no REST e no WebSocket. A
+  API não tem outro caminho de autenticação para pessoas.
+
+**Erros**
+- O service e o guard lançam um erro de domínio (subclasse de `DomainError`, com um `code` do
+  tipo `ErrorCode`). Eles não lançam `HttpException` nem montam resposta.
+- Só o filter global traduz erro em resposta HTTP: `application/problem+json`, com `type`
+  (`about:blank`), `title`, `status`, `detail` e `code`, sem `instance`.
+- Erro inesperado responde 500 com `internal_error`, sem mensagem interna nem stack trace, e vai
+  para o log no nível `error`.
+- Filter (`APP_FILTER`) e `ValidationPipe` (`APP_PIPE`) são registrados no `AppModule`, nunca no
+  `main.ts`, para a aplicação de teste ser igual à real.
+- Os códigos e o status de cada um ficam num mapa só, em `src/common/errors/`.
+
+**Configuração**
+- Só `src/config/` lê `process.env`. As outras peças recebem a configuração pelo
+  `ConfigService`, já validada.
+- Faltou variável obrigatória: a API não sobe, e a mensagem diz o nome dela.
+- Variável nova entra no schema, no `.env.example` e no `compose.yaml`, e na tabela do LLD
+  ("Valores e configuração").
+
+**Banco**
+- `synchronize` sempre desligado. O schema muda só por migração gerada e revisada.
+- A aplicação não roda migrações ao subir.
+- Toda entidade herda a entidade base: `id` UUID v7 gerado na aplicação, `created_at` e
+  `updated_at` em `timestamptz`. Inserção fora do `save` gera o id com a mesma função.
+- Nomes de tabela e coluna em `snake_case`, tabelas no plural; o código usa `camelCase` e a
+  estratégia de nomes converte.
+- O que precisa ser atômico (a mensagem com menções, notificações e contadores) vai numa
+  transação só, e o evento do WebSocket sai depois do commit.
+
+**Segurança e logs**
+- O token de sessão nunca é gravado (o banco guarda o SHA-256) e nunca vai para o log.
+- Senha só como hash Argon2id. Login com e-mail sem conta e com senha errada devolve a mesma
+  resposta, com tempo parecido.
+- O log não leva conteúdo de mensagens, resultado de consultas nem tokens.
+
+## Testes
+
+- **O seam principal são os testes e2e por HTTP, com banco real.** Eles provam o comportamento
+  externo (resposta, linha no banco), e não a forma interna dos services.
+- Os testes e2e rodam no banco `chat_test`, separado do `chat` do desenvolvimento. Ele é criado
+  pelo script de inicialização do Postgres e, num volume que já existe, pelo `globalSetup`, que
+  conecta como o superusuário local e também roda as migrações (LLD, "Ambiente de
+  desenvolvimento"). O compose passa `TEST_DATABASE_URL` e `TEST_DATABASE_ADMIN_URL`.
+- A aplicação de teste sobe só por `createTestApp()` e fecha com `app.close()`. Use
+  `uniqueEmail()` para cada Pessoa criada, para os testes não colidirem.
+- Testes de tempo (janela, bloqueio, validade) envelhecem as linhas no banco no Arrange, pelos
+  atalhos da base de testes. Sem relógio falso e sem `overrideProvider`.
+- Um log que é efeito da regra é provado por um espião em `Logger.prototype.error`.
+- Teste de unidade só para função pura com muitos casos.
+
+A base (`createTestApp()`, `uniqueEmail()`, `globalSetup`) chega com a T01.
+
+## Comando de contas
+
+Planejado na F01. Um script da própria API, rodado no contêiner, que sobe o contexto do Nest sem
+HTTP e chama os mesmos services de Pessoas e Sessões. Operações: `create`, `reset-password`,
+`revoke-sessions` e `purge-expired-sessions`. A senha é lida do terminal sem eco, nunca de
+argumento nem de variável. O comando exato entra na tabela "Comandos" na tarefa que o implementa.
+
+## Onde ler mais
+
+- Regras de Sessão, login e limite de tentativas: LLD, "Estados e regras", "Sessão e login".
+- Tabelas e rotas da F01: [spec da F01](../../.claude/docs/funcionalidades/01-login-e-sessao/spec.md),
+  "Decisões de implementação".
+- Erros, configuração, transações e logs: LLD, "Conceitos transversais de implementação".
+- Por que TypeORM, Socket.IO e UUID v7: ADRs
+  [0018](../../.claude/docs/adr/0018-typeorm-api-do-chat.md),
+  [0019](../../.claude/docs/adr/0019-socket-io-tempo-real.md) e
+  [0022](../../.claude/docs/adr/0022-uuid-v7.md).
