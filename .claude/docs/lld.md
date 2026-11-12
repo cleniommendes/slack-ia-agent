@@ -1,6 +1,6 @@
 # LLD — Clenio Chat
 
-2026-11-09 · Clenio · Status: rascunho · HLD: [hld.md](hld.md)
+2026-11-12 · Clenio · Status: rascunho · HLD: [hld.md](hld.md)
 
 **Onde mora cada fato**
 
@@ -18,8 +18,8 @@
 | Schema do Banco do chat | `apps/chat-api/migrations/`, migrações do TypeORM (planejado) |
 | Schema do Banco dos agentes | A definir |
 | Schema do Banco de negócio | Script de carga em `apps/agents/scripts/` (planejado) |
-| Schema das variáveis de ambiente | O schema zod do módulo de configuração de cada projeto TypeScript (`apps/chat-api/src/config/env.schema.ts` existe; o da `web` é planejado); do projeto `agents`, a definir |
-| Práticas e comandos | `apps/*/AGENTS.md`, um por app, apontados pelo `AGENTS.md` da raiz (planejado) |
+| Schema das variáveis de ambiente | O schema zod do módulo de configuração de cada projeto TypeScript (`apps/chat-api/src/config/env.schema.ts` e o da `web`, planejados); do projeto `agents`, a definir |
+| Práticas e comandos | `apps/*/AGENTS.md`, um por app, apontados pelo `AGENTS.md` da raiz |
 
 Os snapshots OpenAPI ficam gravados no repositório, e a CI falha quando o código muda o contrato
 sem atualizar o snapshot.
@@ -37,7 +37,7 @@ apps/
   web/            Frontend/BFF (Next.js)                              existe
   chat-api/       API do chat (NestJS): REST, WebSocket e o comando   existe
                   de contas e permissões (HLD, seção 2)
-    migrations/   migrações do Banco do chat                          existe
+    migrations/   migrações do Banco do chat                          planejada
   agents/         Serviço de agentes e Worker (Python + ADK),         planejada
                   dois processos do mesmo projeto
     scripts/      script de carga do Banco de negócio                 planejada
@@ -431,7 +431,7 @@ atualiza esse cache direto, sem nova requisição.
 **Variáveis de ambiente**
 
 O que cada contêiner recebe está no HLD, seção 8, "Configuração e segredos". As já decididas
-(`DATABASE_URL` e `PORT` da API do chat já existem; as demais são `planejadas`):
+(todas `planejadas`):
 
 | Projeto | Variável | Para quê |
 | --- | --- | --- |

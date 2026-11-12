@@ -6,7 +6,7 @@ para pedir um resumo, delegar uma tarefa a alguém ou consultar os números do n
 linguagem natural.
 
 > **Status:** em fase de documentação e início de desenvolvimento. A funcionalidade F01 (login e
-> sessão) está em andamento; o restante está planejado no [roadmap](.claude/docs/roadmap.md).
+> sessão) está com a spec pronta; o restante está planejado no [roadmap](.claude/docs/roadmap.md).
 
 ## O que o produto promete
 
