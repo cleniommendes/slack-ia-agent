@@ -58,6 +58,20 @@ Rode dentro do contêiner, a partir da raiz do repositório: `docker compose exe
 Entram depois: `migration:generate migrations/<Nome>`, `migration:run` e `migration:revert`
 (T01); `test:int` (T01); o comando de contas (F01-T03, abaixo).
 
+## Verificação completa
+
+Rodada uma vez antes de entregar uma tarefa que tocou a API, dentro do contêiner:
+
+```bash
+docker compose exec chat-api pnpm lint
+docker compose exec chat-api pnpm exec tsc --noEmit
+docker compose exec chat-api pnpm test
+docker compose exec chat-api pnpm test:e2e
+```
+
+Todos terminam sem erro. Uma tarefa que cria uma suíte nova (`test:int`, por exemplo) a
+acrescenta aqui.
+
 ## Estrutura de pastas
 
 ```

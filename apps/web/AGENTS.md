@@ -52,9 +52,17 @@ Rode dentro do contêiner, a partir da raiz do repositório: `docker compose exe
 
 O serviço `e2e` e os comandos do Playwright entram com a T02.
 
-**Problema conhecido:** nesta máquina, o `next dev` com Turbopack sobe no contêiner, mas fecha a
-conexão em toda requisição; com `next dev --webpack` funciona. A causa está em investigação (veja
-o `AGENTS.md` da raiz). Não troque o script `dev` sem combinar.
+## Verificação completa
+
+Rodada uma vez antes de entregar uma tarefa que tocou a web, dentro do contêiner:
+
+```bash
+docker compose exec web pnpm lint
+docker compose exec web pnpm exec tsc --noEmit
+docker compose exec web pnpm build
+```
+
+Todos terminam sem erro. Os testes do Playwright entram aqui com a T02.
 
 ## Estrutura de pastas
 
