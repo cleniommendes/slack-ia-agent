@@ -1,0 +1,18 @@
+# Imagem de desenvolvimento da API do chat (LLD, seção 10).
+# Sem dependências na imagem: o CMD instala na subida e mantém o contêiner de pé.
+FROM node:26-slim
+
+# O pnpm instalado aqui só faz o bootstrap: ele troca para a versão do
+# `packageManager` do package.json.
+RUN npm install -g pnpm@11 && npm cache clean --force
+
+USER node
+WORKDIR /home/node/app/apps/chat-api
+
+ENV PNPM_HOME=/home/node/.local/share/pnpm \
+    CI=true
+
+EXPOSE 3000
+
+# Se o install falha, o contêiner continua de pé e o erro fica em `docker compose logs`.
+CMD ["sh", "-c", "pnpm install --frozen-lockfile --store-dir /home/node/app/.pnpm-store || echo 'pnpm install falhou'; exec sleep infinity"]

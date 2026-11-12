@@ -62,7 +62,7 @@ Tudo roda em contêineres pelo `compose.yaml` da raiz (projeto `clenio-slack-ia`
 | --- | --- | --- |
 | `web` | 3000 | Frontend/BFF (Node 26, pnpm 11) |
 | `chat-api` | 3001 | API do chat (Node 26, pnpm 11) |
-| `postgres` | 5432 | Bancos `chat`, `agents` e `business` (PostgreSQL 18) |
+| `postgres` | 5433 | Bancos `chat`, `agents` e `business` (PostgreSQL 18) |
 | `s3` | 8333 | SeaweedFS, substituto do S3, com o bucket `reports` |
 | `e2e` (planejado) | — | Testes de ponta a ponta com Playwright |
 

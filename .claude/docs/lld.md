@@ -455,7 +455,7 @@ substitui cada serviço de produção segue o HLD, seção 9, "Implantação e a
 | --- | --- | --- | --- |
 | `web` | `apps/web/Dockerfile.dev` (Node 26, pnpm 11) | 3000 | Frontend/BFF |
 | `chat-api` | `apps/chat-api/Dockerfile.dev` (Node 26, pnpm 11) | 3001 (3000 no contêiner) | API do chat |
-| `postgres` | `postgres:18` | 5432 | Banco do chat, dos agentes e de negócio |
+| `postgres` | `postgres:18` | 5433 (5432 no contêiner) | Banco do chat, dos agentes e de negócio |
 | `s3` | `chrislusf/seaweedfs:4.52` (`weed mini`) | 8333 | Substituto do armazenamento compatível com S3, com o bucket `reports` |
 | `e2e` (planejado) | Imagem oficial do Playwright, na mesma versão do `@playwright/test` do `web` | — | Roda os testes de ponta a ponta do `web` contra `http://web:3000` e o `playwright-cli`; sobe só pelo `profile` e fica parado, como `web` e `chat-api` |
 

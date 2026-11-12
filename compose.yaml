@@ -1,0 +1,66 @@
+# Ambiente de desenvolvimento (LLD, seção 10).
+# Os apps não sobem sozinhos:
+#   docker compose exec chat-api pnpm start:dev
+#   docker compose exec web pnpm dev
+name: clenio-slack-ia
+
+services:
+  web:
+    build:
+      context: apps/web
+      dockerfile: Dockerfile.dev
+    user: "1000:1000"
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/home/node/app
+    environment:
+      CHAT_API_URL: http://chat-api:3000
+    depends_on:
+      - chat-api
+
+  chat-api:
+    build:
+      context: apps/chat-api
+      dockerfile: Dockerfile.dev
+    user: "1000:1000"
+    ports:
+      - "3001:3000"
+    volumes:
+      - .:/home/node/app
+    environment:
+      PORT: "3000"
+      DATABASE_URL: postgres://chat:chat@postgres:5432/chat
+      TEST_DATABASE_URL: postgres://chat:chat@postgres:5432/chat_test
+      TEST_DATABASE_ADMIN_URL: postgres://postgres:postgres@postgres:5432/postgres
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:18
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres-data:/var/lib/postgresql
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  s3:
+    image: chrislusf/seaweedfs:4.52
+    command: ["mini", "-dir=/data", "-bucket=reports"]
+    ports:
+      - "8333:8333"
+    volumes:
+      - s3-data:/data
+
+volumes:
+  postgres-data:
+  s3-data:
