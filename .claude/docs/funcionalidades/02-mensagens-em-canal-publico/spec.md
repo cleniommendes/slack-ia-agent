@@ -247,7 +247,7 @@ plano de testes junto dos testes. Cobrem:
   nome;
 - a fixture `messages` grava mensagens direto no banco, com autor, texto e `created_at` dados.
 
-**Verificações do agente com o `playwright-cli`**, registradas na pasta da tarefa da tela: a
+**Verificações do agente com o Claude in Chrome**, registradas na pasta da tarefa da tela: a
 validação visual em 1440 × 900, nos temas claro e escuro, comparada com o `get_screenshot` dos
 frames da seção "Conversa" (`docs/design-system.md`, "Validação visual").
 

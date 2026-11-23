@@ -155,6 +155,17 @@ O comportamento completo está no LLD, "Cliente", "Sessão no cliente".
 - Telas Entrar e Home passam na checagem do `@axe-core/playwright` sem violações. O fluxo
   inteiro funciona só pelo teclado.
 
+### Verificações do agente com o Claude in Chrome
+
+A validação visual, as verificações exploratórias que a spec pede e a depuração pelo console e
+pela rede usam a extensão Claude in Chrome (LLD, "Estrutura do código"). Ela não prova critério
+que precise se repetir: isso continua com o Playwright.
+
+- Carregue a skill do Claude in Chrome antes do primeiro uso.
+- Abra sempre uma aba nova, contra `http://localhost:3000`, sem mexer nas abas da pessoa.
+- Use só Pessoas de teste, criadas pelo comando de contas ou pela fixture, nunca dados reais.
+- Registre as capturas e o que foi conferido na pasta da tarefa.
+
 O serviço, as fixtures (`person`, `loggedInPage`) e o teste-semente chegam com a T02 e a F01.
 
 ## Onde ler mais

@@ -22,8 +22,8 @@ tela pedida. Referências:
   não vai para "Entrar".
 - [ ] **CA3** · "Tentar de novo" refaz a renderização da rota. Com a API de volta, mostra a tela
   pedida; com 401, segue o caminho normal para "Entrar".
-- [ ] **CA4** · O agente verifica CA2 e CA3 com o `playwright-cli`: para o processo da API do
+- [ ] **CA4** · O agente verifica CA2 e CA3 com o Claude in Chrome: para o processo da API do
   chat, abre uma tela logada, confere a mensagem e o botão, sobe a API de novo e clica em "Tentar
-  de novo". O snapshot e a captura ficam registrados na pasta desta tarefa.
+  de novo". A captura fica registrada na pasta desta tarefa.
 - [ ] **CA5** · A validação visual de "Erro de sessão" e de "Carregando o app", nos dois temas,
   está registrada na pasta desta tarefa.

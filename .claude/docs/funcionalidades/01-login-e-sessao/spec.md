@@ -262,10 +262,10 @@ skill rodam no contêiner `e2e`, nunca com `npx` na máquina.
   os que partem de alguém logado usam `loggedInPage`;
 - os testes de revogação e de tempo mexem nas linhas do banco no Arrange, como na API.
 
-**Verificações do agente com o `playwright-cli`**, registradas na pasta da tarefa da tela:
+**Verificações do agente com o Claude in Chrome**, registradas na pasta da tarefa da tela:
 - **"Erro de sessão":** o agente para o processo da API do chat, abre uma tela logada, confere a
   mensagem e o botão, sobe a API de novo e confere que "Tentar de novo" mostra a tela pedida. O
-  snapshot e a captura ficam no registro.
+  captura fica no registro.
 - **Validação visual:** capturas em 1440 × 900, no tema claro e no escuro (trocando o
   `data-theme`), comparadas com o `get_screenshot` dos frames do Figma
   (`docs/design-system.md`, "Validação visual").

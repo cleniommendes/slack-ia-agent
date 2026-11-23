@@ -22,5 +22,5 @@ Referências:
 - [ ] **CA3** · Um nome que já existe, inclusive `geral`, é recusado com mensagem.
 - [ ] **CA4** · O teste de integração do comando prova o nome válido, o inválido e o repetido.
 - [ ] **CA5** · O Canal criado pelo comando aparece na seção "Canais", na ordem alfabética,
-  verificado pelo agente com o `playwright-cli` e registrado na pasta desta tarefa.
+  verificado pelo agente com o Claude in Chrome e registrado na pasta desta tarefa.
 - [ ] **CA6** · O `AGENTS.md` da API lista a operação `create-channel` na seção "Comandos".

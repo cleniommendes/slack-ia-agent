@@ -28,8 +28,8 @@ tela atinge a nota 100 de acessibilidade. Referências:
   variables locais antes do código, e a tela bate com ele.
 - [ ] **CA5** · Pelo teclado, Tab percorre E-mail, Senha e o botão, e Enter envia.
 - [ ] **CA6** · O Playwright prova o CA1, o foco do CA2, o fluxo só pelo teclado do CA5 e a
-  checagem do axe sem violações nas telas Entrar e Home. A falha no envio do CA3 é provada pelo
-  `playwright-cli`, com a API do chat parada, e registrada na pasta desta tarefa.
+  checagem do axe sem violações nas telas Entrar e Home. A falha no envio do CA3 é verificada pelo
+  agente com o Claude in Chrome, com a API do chat parada, e registrada na pasta desta tarefa.
 - [ ] **CA7** · O roteiro manual com a nota 100 de Acessibilidade do Lighthouse na tela Entrar,
   feita por uma pessoa, e a validação visual dos estados "Erro de validação" e "Falha no envio",
   nos dois temas, estão registrados na pasta desta tarefa.
