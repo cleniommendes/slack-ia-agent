@@ -33,7 +33,7 @@ A documentação fica em `.claude/docs/`. Quando um documento cita `docs/...`, l
 | Lista, ordem e status das funcionalidades | [`roadmap.md`](.claude/docs/roadmap.md) |
 | O que construir em cada funcionalidade | [`funcionalidades/`](.claude/docs/funcionalidades/) |
 | Tokens, componentes e fluxo com o Figma | [`design-system.md`](.claude/docs/design-system.md) |
-| Vocabulário do domínio | `GLOSSARY.md` na raiz (planejado) |
+| Vocabulário do domínio | [`GLOSSARY.md`](GLOSSARY.md), na raiz |
 | Padrões de código por tipo de arquivo | [`.claude/rules/`](.claude/rules/), carregadas pelo caminho do arquivo |
 
 **Onde cada informação mora**

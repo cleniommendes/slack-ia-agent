@@ -1,6 +1,6 @@
 # LLD — Clenio Chat
 
-2026-11-12 · Clenio · Status: rascunho · HLD: [hld.md](hld.md)
+2026-11-23 · Clenio · Status: rascunho · HLD: [hld.md](hld.md)
 
 **Onde mora cada fato**
 
@@ -274,8 +274,8 @@ de eventos do WebSocket estão a definir. As rotas já decididas:
 ## 6. Estados e regras
 
 As subseções desta parte (pedido ao agente, pergunta pendente, mensagem, consulta a dados de
-negócio, limite de pedidos e teto de custo) e as regras de cada uma estão a definir. As regras já
-decididas ficam abaixo.
+negócio, limite de pedidos e teto de custo) estão incompletas. As regras já decididas ficam
+abaixo; o vocabulário é o do `GLOSSARY.md`.
 
 ### 6.1 Tarefa
 
@@ -284,6 +284,9 @@ Dois estados: aberta e concluída (HLD 6.6).
 - Só o responsável conclui e reabre a tarefa. Outra pessoa, inclusive quem delegou, recebe um
   erro do catálogo.
 - Ao concluir ou reabrir, quem delegou é avisado (HLD 6.6).
+- O responsável precisa participar da Conversa do Pedido. Se não participa, o Agente recusa, e a
+  API do chat também recusa a criação com um erro do catálogo, porque o responsável não poderia
+  abrir a mensagem de origem.
 - Concluir uma tarefa já concluída, ou reabrir uma aberta: a definir.
 
 ### 6.2 Sessão e login
@@ -345,6 +348,45 @@ Legenda: "livre" é o e-mail sem linha de tentativas; o estado vale por e-mail n
 - O incremento é atômico, no próprio `UPDATE` do upsert, para duas falhas simultâneas contarem as
   duas.
 - A resposta é a mesma para e-mail com e sem conta, para não revelar se o e-mail tem conta.
+
+### 6.3 Participação e mensagem
+
+- Toda Pessoa participa de todo Canal público, sem registro de entrada. No Canal privado,
+  participa só quem foi convidado.
+- Uma Conversa direta tem exatamente duas Pessoas diferentes. Abrir uma consigo mesma recebe um
+  erro do catálogo. Um Agente não tem Conversa direta.
+- A Citação aponta para uma mensagem da mesma Conversa e mostra sempre a versão atual dela: o texto
+  editado, ou "mensagem apagada".
+- Não lidas são as mensagens depois da Última leitura, sem contar as da própria Pessoa. As do
+  Agente contam.
+- Menção a uma Pessoa que não participa da Conversa fica só como texto: não gera Notificação nem
+  Menção não lida, e não dá acesso à Conversa.
+- Menção a um Agente nunca gera Notificação. Com o Agente conectado, vira Pedido ("Pedido e
+  Pergunta pendente"); desconectado, fica só como texto, e quem escreveu vê um aviso.
+- Uma mensagem marcada "dados de negócio" aparece bloqueada para quem não tem Permissão de dados em
+  todo lugar onde o conteúdo aparece: histórico, evento, Citação, Notificação e Resumo. O mecanismo
+  do evento está em "Conceitos transversais de implementação", seção "Segurança".
+
+### 6.4 Pedido e Pergunta pendente
+
+- O Agente atua em qualquer Conversa em que é mencionado, inclusive Canal privado e Conversa
+  direta, sem ser Membro, e lê só as mensagens daquela Conversa.
+- A Pergunta pendente fica presa a quem fez o Pedido, naquela Conversa: a próxima mensagem dessa
+  Pessoa vai ao Agente sem menção (HLD 6.3); a de outra Pessoa, não. O clique de outra Pessoa numa
+  Resposta pronta recebe um erro do catálogo.
+- A Pergunta pendente expira depois do `prazo da Pergunta pendente`, ou quando o Agente é
+  desconectado. Depois disso, uma mensagem sem menção é só conversa.
+
+### 6.5 Conexão de Agente
+
+- Desconectar um Agente impede Pedidos novos. As mensagens antigas dele e as Tarefas abertas que
+  ele registrou continuam, e as Perguntas pendentes dele expiram.
+- Pedido em andamento quando o Agente é desconectado: a definir.
+
+### 6.6 Presença
+
+- A Presença é online ou ausente, escolhida pela Pessoa, e não muda com a conexão.
+- Presença inicial de uma Pessoa: a definir.
 
 ## 7. Processos de segundo plano
 
@@ -427,6 +469,7 @@ atualiza esse cache direto, sem nova requisição.
 | Retenção dos eventos de reconexão | A definir | API do chat (Redis) | A definir |
 | Tempo limite da consulta ao Banco de negócio | A definir | Serviço de agentes e Worker | A definir |
 | Tamanho da página do histórico | A definir | API do chat | A definir |
+| Prazo da Pergunta pendente | A definir | API do chat | A definir |
 
 **Variáveis de ambiente**
 
@@ -577,11 +620,13 @@ As decisões que mudam o desenho estão no HLD, seção 10.
 **Estados, regras e processos**
 
 - [ ] Subseções de "Estados e regras": pedido ao agente (estados; resposta a uma pergunta como
-      pedido novo ou continuação), pergunta pendente (quando termina), mensagem (exclusão com
+      pedido novo ou continuação), pergunta pendente (valor do prazo), mensagem (exclusão com
       menções, notificações e contadores; edição que acrescenta menção), consulta
-      a dados de negócio (comparação do lastro), limite de pedidos e teto de custo, presença e
+      a dados de negócio (comparação do lastro), limite de pedidos e teto de custo, e
       "digitando".
 - [ ] Tarefa: concluir uma já concluída, ou reabrir uma aberta.
+- [ ] Pedido em andamento quando o Agente é desconectado.
+- [ ] Presença inicial de uma Pessoa.
 - [ ] Idempotência do job do PDF (chave no S3, entrega única) e outras rotinas (retenção dos
       PDFs, perguntas pendentes vencidas).
 

@@ -196,4 +196,4 @@ As funcionalidades de cada fase, a ordem entre elas e o status estão no
 
 ## Glossário
 
-O vocabulário do produto está no [GLOSSARY.md](../GLOSSARY.md), na raiz do repositório.
+O vocabulário do produto está no [GLOSSARY.md](../../GLOSSARY.md), na raiz do repositório.
