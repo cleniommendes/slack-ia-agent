@@ -1,6 +1,6 @@
 # PRD · F02 · Mensagens em canal público
 
-2026-11-23 · Clenio · Status: rascunho
+2026-11-23 · Clenio · Status: aprovado
 
 ## 1. Resumo executivo
 
@@ -113,7 +113,7 @@ flowchart TD
 - Ao abrir um Canal, a Pessoa vê as mensagens mais recentes, com a mais nova embaixo e a
   rolagem no fim.
 - Rolar até o topo carrega as mensagens anteriores, sem pular a posição de leitura, até a
-  primeira mensagem do Canal, acima da qual aparece o início do Canal (nome e descrição).
+  primeira mensagem do Canal, acima da qual aparece o início do Canal, com o nome dele.
 - Um Canal sem mensagens mostra só o início do Canal, com um convite para mandar a primeira.
 - As mensagens ficam na ordem em que o chat as recebeu, e não na do relógio de quem enviou.
 - Um separador marca cada dia: "Hoje", "Ontem" ou a data. Os horários seguem o fuso do navegador
