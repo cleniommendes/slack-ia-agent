@@ -228,8 +228,8 @@ exigem estão em "Conceitos transversais de implementação", seção "Concorrê
 | --- | --- | --- |
 | Chat | Pessoas (perfil, papel de administrador, permissão de dados) | a detalhar |
 | Chat | Sessões | a detalhar |
-| Chat | Canais e membros | a detalhar |
-| Chat | Conversas diretas | a detalhar |
+| Chat | Conversas: Canais e Conversas diretas numa tabela só, com o tipo (spec da F02) | planejada |
+| Chat | Membros de Canal privado | a detalhar |
 | Chat | Mensagens (autor pessoa ou bot, citação, marca "dados de negócio") | a detalhar |
 | Chat | Menções | a detalhar |
 | Chat | Última leitura e contadores por pessoa e conversa | a detalhar |
@@ -254,7 +254,8 @@ exigem estão em "Conceitos transversais de implementação", seção "Concorrê
   autenticação só, igual no REST e no WebSocket; o BFF chama o Serviço de agentes com a credencial de serviço; os bots chamam a
   API do chat com a credencial de bot e o identificador de pedido (forma em "Segurança").
 - Campos do JSON em `snake_case`, nas três APIs.
-- Paginação: a definir.
+- Paginação do histórico: por cursor, a mais recente primeiro; `before` é o id da mensagem, e a
+  resposta traz `items` e `has_more` (spec da F02). Paginação das outras listas: a definir.
 - Erros: "Conceitos transversais de implementação", seção "Erros".
 - Eventos do WebSocket: tipos em `packages/chat-events/`, consumidos por `chat-api` e `web`.
 
@@ -407,7 +408,7 @@ quando apresentadas ("Estados e regras", seção "Sessão e login") e pela opera
 | --- | --- | --- | --- | --- |
 | `/entrar` | Público | Sessão, quando há cookie | Entrar com e-mail e senha | planejada |
 | `/` (Home) | Sessão | Pessoa da Sessão | Sair | planejada |
-| A definir | Sessão | Histórico da conversa | Enviar, editar, apagar, citar; "digitando"; botões de resposta pronta | a detalhar |
+| `/conversas/<id>` | Sessão | Histórico da conversa | Enviar, editar, apagar, citar; "digitando"; botões de resposta pronta | planejada |
 | A definir (lateral) | Sessão | Conversas, com não lidas e menções | Abrir conversa | a detalhar |
 | A definir | Sessão | Atividade: Menções, DMs, Tarefas | Abrir a mensagem; concluir e reabrir tarefa | a detalhar |
 | A definir | Sessão | Perfil próprio e de outras pessoas | Editar o próprio perfil e a presença | a detalhar |
@@ -468,7 +469,7 @@ atualiza esse cache direto, sem nova requisição.
 | Validade do identificador de pedido | A definir | API do chat | A definir |
 | Retenção dos eventos de reconexão | A definir | API do chat (Redis) | A definir |
 | Tempo limite da consulta ao Banco de negócio | A definir | Serviço de agentes e Worker | A definir |
-| Tamanho da página do histórico | A definir | API do chat | A definir |
+| Tamanho da página do histórico | 50 (spec da F02) | API do chat | Constante |
 | Prazo da Pergunta pendente | A definir | API do chat | A definir |
 
 **Variáveis de ambiente**
@@ -609,10 +610,11 @@ As decisões que mudam o desenho estão no HLD, seção 10.
 
 **Dados e interfaces**
 
-- [ ] Canais e conversas diretas: uma tabela com tipo, ou tabelas separadas.
+- [x] Canais e conversas diretas: uma tabela com tipo (spec da F02).
 - [ ] Bots na mesma tabela das pessoas, ou não.
 - [ ] Diagrama de entidades e relações; forma das tabelas.
-- [ ] Paginação do histórico e das listas.
+- [x] Paginação do histórico: por cursor (spec da F02).
+- [ ] Paginação das outras listas.
 - [x] Como o BFF leva a sessão à API do chat.
 - [ ] Índice das rotas (BFF, API do chat para o BFF e para os bots, Serviço de agentes) e lista
       de eventos do WebSocket.
