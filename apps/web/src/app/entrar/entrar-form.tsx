@@ -41,7 +41,6 @@ export function EntrarForm() {
       <Field
         label="Senha"
         htmlFor="password"
-        errorId="password-error"
         error={state.error ? INVALID_CREDENTIALS_MESSAGE : undefined}
       >
         <Input

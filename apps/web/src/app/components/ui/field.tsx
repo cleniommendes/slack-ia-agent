@@ -3,8 +3,6 @@ import { cn } from '@/app/utils/cn';
 type FieldProps = {
   label: string;
   htmlFor: string;
-  /** Id do elemento da mensagem de erro, para o campo apontar para ela. */
-  errorId?: string;
   error?: string;
   children: React.ReactNode;
   className?: string;
@@ -14,7 +12,6 @@ type FieldProps = {
 export function Field({
   label,
   htmlFor,
-  errorId,
   error,
   children,
   className,
@@ -26,7 +23,7 @@ export function Field({
       </label>
       {children}
       {error && (
-        <p id={errorId} className="text-small text-danger-fg">
+        <p id={`${htmlFor}-error`} className="text-small text-danger-fg">
           {error}
         </p>
       )}
