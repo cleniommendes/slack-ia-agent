@@ -7,8 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "format": "prettier --write \"src/**/*.{ts,tsx,css}\" \"*.{ts,mjs}\"",
-    "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\" \"*.{ts,mjs}\"",
+    "format": "prettier --write \"src/**/*.{ts,tsx,css}\" \"e2e/**/*.ts\" \"*.{ts,mjs}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\" \"e2e/**/*.ts\" \"*.{ts,mjs}\"",
     "test:e2e": "playwright test"
   },
   "dependencies": {
