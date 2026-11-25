@@ -14,10 +14,10 @@ A web é a interface do Clenio Chat e o BFF, o único ponto de entrada do navega
 cookie de sessão, chama a API do chat e dispara os pedidos aos agentes. As regras gerais do
 projeto estão no [`AGENTS.md` da raiz](../../AGENTS.md); aqui ficam só as da web.
 
-**Situação:** esqueleto do `create-next-app`. A base (configuração, tokens do design system,
-Playwright) é a tarefa
-[F01-T02](../../.claude/docs/funcionalidades/01-login-e-sessao/tarefas/02-base-da-web-e-dos-testes-e2e/tarefa.md).
-Antes de implementar, leia a tarefa e o `plano.md` dela.
+**Situação:** base pronta (configuração, tokens do design system e Playwright, da
+[F01-T02](../../.claude/docs/funcionalidades/01-login-e-sessao/tarefas/02-base-da-web-e-dos-testes-e2e/tarefa.md));
+as telas entram por cima, sem rota `/` até a F01-T03. Antes de implementar uma tarefa, leia a tarefa
+e o `plano.md` dela.
 
 ## Stack
 
@@ -32,7 +32,7 @@ Antes de implementar, leia a tarefa e o `plano.md` dela.
 | Leituras que o tempo real altera | SWR, atualizado pelos eventos do WebSocket | planejada (F03) |
 | Tempo real | Socket.IO client | planejada (F03) |
 | Configuração | schema zod | planejada (T02) |
-| Testes | Playwright, só Chromium headless, com `@axe-core/playwright` | planejada (T02) |
+| Testes | Playwright, só Chromium headless, com `@axe-core/playwright` | instalado |
 | Interface | `lucide-react`, `radix-ui`, `class-variance-authority` + `clsx` + `tailwind-merge`, `sonner`, Lato pelo `next/font` | a instalar, quando o primeiro componente precisar |
 
 A stack de interface, com o porquê de cada peça, está no
@@ -50,7 +50,15 @@ Rode dentro do contêiner, a partir da raiz do repositório: `docker compose exe
 | `pnpm exec tsc --noEmit` | Confere os tipos |
 | `pnpm add <pacote>` | Instala uma dependência; nunca pelo host nem com `npm` |
 
-O serviço `e2e` e os comandos do Playwright entram com a T02.
+**Testes de ponta a ponta** rodam no serviço `e2e`, com a web de pé (`pnpm dev`). Suba o serviço
+com `docker compose --profile e2e up -d --wait e2e` (a imagem do Playwright não traz o pnpm, por
+isso o binário é chamado direto):
+
+| Comando | O que faz |
+| --- | --- |
+| `docker compose exec e2e node_modules/.bin/playwright test` | Roda todos os testes do Playwright (`e2e/`); o script `pnpm test:e2e` é o mesmo comando |
+| `docker compose exec e2e node_modules/.bin/playwright test e2e/<arquivo>` | Roda um arquivo |
+| `docker compose exec e2e node_modules/.bin/playwright cli <comando>` | O `playwright-cli` do pacote instalado, configurado em `.playwright/cli.config.json` (Chromium headless) |
 
 ## Verificação completa
 
@@ -60,15 +68,18 @@ Rodada uma vez antes de entregar uma tarefa que tocou a web, dentro do contêine
 docker compose exec web pnpm lint
 docker compose exec web pnpm exec tsc --noEmit
 docker compose exec web pnpm build
+docker compose --profile e2e up -d --wait e2e   # com `pnpm dev` rodando no contêiner web
+docker compose exec e2e node_modules/.bin/playwright test
 ```
 
-Todos terminam sem erro. Os testes do Playwright entram aqui com a T02.
+Todos terminam sem erro.
 
 ## Estrutura de pastas
 
 ```
 apps/web/src/app/
-  layout.tsx, page.tsx, globals.css
+  layout.tsx, globals.css
+  config/env.ts         único lugar que lê process.env (schema zod); getEnv()
   (rotas)               /entrar, / (Home) e as telas logadas, sob um layout comum
   components/
     ui/                 primitivos, um arquivo por componente, em kebab-case (button.tsx)
@@ -81,8 +92,10 @@ apps/web/src/app/
 - Um componente do Figma corresponde a um componente no código, com o mesmo nome em PascalCase.
   Antes de criar um, procure em `src/app/components/` um que já cubra o caso.
 - As telas do Figma viram rotas e layouts, compostos a partir dos componentes.
-- Hoje só existem `layout.tsx`, `page.tsx` e `globals.css` do esqueleto, e os SVGs de `public/`.
-  Tudo isso sai quando a página inicial for substituída.
+- O `next.config.ts`, na raiz do projeto, chama `getEnv()` ao ser
+  carregado, para a web falhar na subida com o nome da variável (o `register()` do
+  `instrumentation.ts` não serve: o Next captura o erro e sobe a web respondendo 500).
+- Os testes do Playwright ficam em `apps/web/e2e/`, com o `playwright.config.ts` na raiz do projeto.
 
 ## Server Components
 
@@ -126,7 +139,8 @@ O comportamento completo está no LLD, "Cliente", "Sessão no cliente".
 
 - Um módulo só lê e valida as variáveis, com zod: `CHAT_API_URL`, `SESSION_COOKIE_NAME`,
   `SESSION_COOKIE_DOMAIN` e `SESSION_COOKIE_SECURE`. Nenhum outro arquivo lê `process.env`.
-- Faltou variável obrigatória: a web falha com o nome dela.
+- Faltou variável obrigatória: a web falha na subida (`next dev` e `next start`, que saem com
+  código 1) com o nome dela.
 - Variável nova entra no schema, no `.env.example`, no `compose.yaml` e na tabela do LLD.
 
 ## Design system e Figma
@@ -149,6 +163,8 @@ O comportamento completo está no LLD, "Cliente", "Sessão no cliente".
   na web por enquanto.
 - Rodam só no Chromium headless, no serviço `e2e` do compose, contra o ambiente de
   desenvolvimento de pé (web, API e banco `chat`). Nunca rode o Playwright com `npx` no host.
+- O teste-semente (`e2e/seed.spec.ts`) abre `/`, que até a F01-T03 é a página "não encontrada" do
+  Next; a F01-T03 o troca por `/entrar`.
 - Cada teste cria a própria Pessoa com e-mail de prefixo `e2e-` no domínio `teste.local`.
 - Os testes são escritos pelo fluxo da skill `playwright-cli` (planejar, gerar e corrigir), a
   partir de um teste-semente.

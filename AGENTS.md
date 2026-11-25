@@ -62,8 +62,9 @@ máquina.** Os detalhes do ambiente estão no LLD, "Ambiente de desenvolvimento"
 | `chat-api` | API do chat em NestJS (Node 26, pnpm 11) | `http://localhost:3001` | `http://chat-api:3000` |
 | `postgres` | PostgreSQL 18, com os bancos `chat`, `chat_test`, `agents` e `business` | `localhost:5433` | `postgres:5432` |
 | `s3` | Emulador do S3 (SeaweedFS), com o bucket `reports` | `http://localhost:8333` | `http://s3:8333` |
+| `e2e` | Playwright (Chromium) e `playwright-cli`, na imagem oficial da mesma versão do `@playwright/test` do `web`; só sobe pelo `profile` `e2e` | — | — |
 
-Entram depois: `agents`, `redis` e o `e2e` (Playwright, pelo `profile`).
+Entram depois: `agents` e `redis`.
 
 Os contêineres `web` e `chat-api` instalam as dependências ao subir e depois ficam parados, sem
 iniciar a aplicação. Os comandos rodam neles com `docker compose exec <serviço> <comando>`, e os
@@ -85,6 +86,17 @@ docker compose exec web pnpm dev
 - `start:dev` e `dev` ficam presos ao terminal: rode cada um num terminal próprio ou em segundo
   plano.
 - As migrações não rodam na subida.
+
+**Testes de ponta a ponta da web.** O `e2e` não sobe com o resto: ele tem o `profile` `e2e` e fica
+parado, como `web` e `chat-api`. Suba com a web de pé (`docker compose exec web pnpm dev`):
+
+```bash
+docker compose --profile e2e up -d --wait e2e
+docker compose exec e2e node_modules/.bin/playwright test
+```
+
+O `playwright-cli` é o do pacote instalado no `web`: `docker compose exec e2e node_modules/.bin/playwright cli <comando>`.
+Os comandos e a escrita dos testes estão no [`AGENTS.md` da web](apps/web/AGENTS.md).
 
 **Derrubar**
 

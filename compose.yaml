@@ -16,8 +16,28 @@ services:
       - .:/home/node/app
     environment:
       CHAT_API_URL: http://chat-api:3000
+      SESSION_COOKIE_NAME: clenio_session
+      SESSION_COOKIE_DOMAIN: ""
+      SESSION_COOKIE_SECURE: "false"
     depends_on:
       - chat-api
+
+  # Testes de ponta a ponta e playwright-cli (LLD, "Ambiente de desenvolvimento").
+  # Sobe só pelo profile e fica parado; a versão da imagem é a do @playwright/test do web.
+  e2e:
+    profiles: ["e2e"]
+    image: mcr.microsoft.com/playwright:v1.65.1-noble
+    user: "1000:1000"
+    ipc: host
+    init: true
+    working_dir: /home/node/app/apps/web
+    command: ["sleep", "infinity"]
+    volumes:
+      - .:/home/node/app
+    environment:
+      PLAYWRIGHT_HTML_OPEN: never
+    depends_on:
+      - web
 
   chat-api:
     build:
