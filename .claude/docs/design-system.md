@@ -13,13 +13,13 @@ Um token muda nos três lugares na mesma tarefa: a variable no Figma, este docum
 
 ## Estado atual
 
-O Figma tem as fundações, os componentes e as telas; o código ainda é o esqueleto do `create-next-app`.
+O Figma tem as fundações, os componentes e as telas; o código tem os tokens e a fonte, e ainda não tem componentes nem telas.
 
 | Item | Figma | Código |
 | --- | --- | --- |
-| Tokens | 3 coleções de variables (`Primitives`, `Semantic`, `Layout`), 14 estilos de texto, 3 de elevação | `globals.css` só tem `--background` e `--foreground` do esqueleto |
+| Tokens | 3 coleções de variables (`Primitives`, `Semantic`, `Layout`), 14 estilos de texto, 3 de elevação | `globals.css` tem o conjunto completo, nos temas claro e escuro, e a Lato vem do `next/font` |
 | Componentes | 57 componentes em 3 seções, mais 42 ícones | Nenhum |
-| Telas | 129 frames de 1440 × 900, em 10 seções | Só a página inicial do esqueleto |
+| Telas | 129 frames de 1440 × 900, em 10 seções | Nenhuma; a web não tem rota `/` até a F01-T03 |
 | Bibliotecas | Desenho pensado para `lucide-react`, Radix, CVA e Sonner | Só `next`, `react` e `tailwindcss` instalados |
 
 As descrições dos componentes no Figma citam arquivos de uma implementação de referência (`shared/ui/button.tsx`, `entities/message/ui/message-item.tsx` e outros, no estilo Feature-Sliced Design). Esses arquivos não existem neste repositório. Use as descrições pelo comportamento que documentam, não pelos caminhos; a pasta de cada componente segue a seção "Organização no código" abaixo.
@@ -35,7 +35,7 @@ As descrições dos componentes no Figma citam arquivos de uma implementação d
 | Primitivos acessíveis | `radix-ui` (Dialog, AlertDialog, DropdownMenu, Tooltip, Switch, Tabs) | A instalar |
 | Variantes | `class-variance-authority`, com `clsx` e `tailwind-merge` num helper `cn` em `src/app/utils/cn.ts` | A instalar |
 | Toasts | `sonner` | A instalar |
-| Fonte | Lato pelo `next/font/google` | A trocar (hoje é Geist) |
+| Fonte | Lato pelo `next/font/google` | Instalado |
 
 Instale uma biblioteca quando o primeiro componente precisar dela, sempre dentro do contêiner (`docker compose -f compose.yaml exec web pnpm add <pacote>`). O arquivo do Figma tem kits da comunidade ligados (Material 3, Simple Design System, kits da Apple): **não use nenhum deles**. O produto usa só as variables e os componentes locais do arquivo.
 

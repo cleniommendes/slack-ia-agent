@@ -1,6 +1,6 @@
 # LLD — Clenio Chat
 
-2026-11-23 · Clenio · Status: rascunho · HLD: [hld.md](hld.md)
+2026-11-25 · Clenio · Status: rascunho · HLD: [hld.md](hld.md)
 
 **Onde mora cada fato**
 
@@ -476,7 +476,7 @@ atualiza esse cache direto, sem nova requisição.
 **Variáveis de ambiente**
 
 O que cada contêiner recebe está no HLD, seção 8, "Configuração e segredos". As já decididas
-(todas `planejadas`):
+(as da web existem em `apps/web/src/app/config/env.ts`; as da API do chat são `planejadas`):
 
 | Projeto | Variável | Para quê |
 | --- | --- | --- |
@@ -502,7 +502,7 @@ substitui cada serviço de produção segue o HLD, seção 9, "Implantação e a
 | `chat-api` | `apps/chat-api/Dockerfile.dev` (Node 26, pnpm 11) | 3001 (3000 no contêiner) | API do chat |
 | `postgres` | `postgres:18` | 5433 (5432 no contêiner) | Banco do chat, dos agentes e de negócio |
 | `s3` | `chrislusf/seaweedfs:4.52` (`weed mini`) | 8333 | Substituto do armazenamento compatível com S3, com o bucket `reports` |
-| `e2e` (planejado) | Imagem oficial do Playwright, na mesma versão do `@playwright/test` do `web` | — | Roda os testes de ponta a ponta do `web` contra `http://web:3000` e o `playwright-cli`; sobe só pelo `profile` e fica parado, como `web` e `chat-api` |
+| `e2e` | Imagem oficial do Playwright, na mesma versão do `@playwright/test` do `web` | — | Roda os testes de ponta a ponta do `web` contra `http://web:3000` e o `playwright-cli`; sobe só pelo `profile` e fica parado, como `web` e `chat-api` |
 
 Entram depois: o Redis, quando o primeiro uso dele for implementado, e os serviços `agents` e
 `worker`, quando `apps/agents` existir.
