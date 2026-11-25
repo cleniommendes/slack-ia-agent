@@ -44,11 +44,7 @@ test.describe('tokens do design system', () => {
   test('usa a fonte Lato', async ({ page }) => {
     await page.goto('/');
 
-    const fontFamily = await page.evaluate(
-      () => getComputedStyle(document.body).fontFamily,
-    );
-
-    expect(fontFamily).toMatch(/lato/i);
+    await expect(page.locator('body')).toHaveCSS('font-family', /lato/i);
   });
 
   test('não serve mais a página inicial do esqueleto', async ({ page }) => {

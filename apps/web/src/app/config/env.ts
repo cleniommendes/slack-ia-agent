@@ -5,9 +5,7 @@ const envSchema = z.object({
   SESSION_COOKIE_NAME: z.string().min(1),
   // Vazio no local: o cookie fica só no host, sem o atributo Domain.
   SESSION_COOKIE_DOMAIN: z.string().default(''),
-  SESSION_COOKIE_SECURE: z
-    .enum(['true', 'false'])
-    .transform((v) => v === 'true'),
+  SESSION_COOKIE_SECURE: z.stringbool({ truthy: ['true'], falsy: ['false'] }),
 });
 
 export type Env = z.infer<typeof envSchema>;
