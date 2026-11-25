@@ -1,6 +1,6 @@
 # 03: Entrar com uma conta criada por comando e ver a Home
 
-**Status:** a fazer
+**Status:** em andamento
 
 **O que construir:** a fatia tracer bullet da F01, em quatro passos:
 1. Quem opera a instalação cria a conta de uma Pessoa por comando.
