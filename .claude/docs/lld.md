@@ -227,8 +227,8 @@ exigem estão em "Conceitos transversais de implementação", seção "Concorrê
 
 | Banco | Entidade (HLD, seção 7) | Situação |
 | --- | --- | --- |
-| Chat | Pessoas (perfil, papel de administrador, permissão de dados) | a detalhar |
-| Chat | Sessões | a detalhar |
+| Chat | Pessoas: `people` existe (e-mail, nome, hash da senha); perfil, papel de administrador e permissão de dados | `people` existe; o resto a detalhar |
+| Chat | Sessões: `sessions` (token como SHA-256, validade, último uso) | existe |
 | Chat | Conversas: Canais e Conversas diretas numa tabela só, com o tipo (spec da F02) | planejada |
 | Chat | Membros de Canal privado | a detalhar |
 | Chat | Mensagens (autor pessoa ou bot, citação, marca "dados de negócio") | a detalhar |
@@ -267,10 +267,10 @@ de eventos do WebSocket estão a definir. As rotas já decididas:
 
 | Método e caminho | Situação | Comportamento |
 | --- | --- | --- |
-| API do chat: `POST /v1/sessions` | planejada | Entrar: "Estados e regras", seção "Sessão e login" |
-| API do chat: `GET /v1/sessions/current` | planejada | Verificar e renovar a Sessão: mesma seção |
+| API do chat: `POST /v1/sessions` | existe | Entrar: "Estados e regras", seção "Sessão e login" |
+| API do chat: `GET /v1/sessions/current` | existe (renovar a Sessão: planejada) | Verificar e renovar a Sessão: mesma seção |
 | API do chat: `DELETE /v1/sessions/current` | planejada | Sair: mesma seção |
-| BFF: `GET /api/sessao/encerrar` | planejada | Apaga o cookie de sessão e leva a `/entrar`, para o layout que recebe 401 (uma renderização não apaga cookie): "Cliente", "Sessão no cliente" |
+| BFF: `GET /api/sessao/encerrar` | existe | Apaga o cookie de sessão e leva a `/entrar`, para o layout que recebe 401 (uma renderização não apaga cookie): "Cliente", "Sessão no cliente" |
 | BFF: Server Actions entrar e sair | planejada | Gravam e apagam o cookie: "Conceitos transversais de implementação", seção "Segurança" |
 | Envio de mensagem no BFF (Server Action) | a detalhar | Mensagem gravada e agente sem receber o pedido: "Conceitos transversais de implementação", seção "Erros" |
 
@@ -408,8 +408,8 @@ quando apresentadas ("Estados e regras", seção "Sessão e login") e pela opera
 
 | Rota | Acesso | Lê | Ações | Situação |
 | --- | --- | --- | --- | --- |
-| `/entrar` | Público | Sessão, quando há cookie | Entrar com e-mail e senha | planejada |
-| `/` (Home) | Sessão | Pessoa da Sessão | Sair | planejada |
+| `/entrar` | Público | Sessão, quando há cookie | Entrar com e-mail e senha | existe |
+| `/` (Home) | Sessão | Pessoa da Sessão | Sair | existe (Sair: planejada) |
 | `/conversas/<id>` | Sessão | Histórico da conversa | Enviar, editar, apagar, citar; "digitando"; botões de resposta pronta | planejada |
 | A definir (lateral) | Sessão | Conversas, com não lidas e menções | Abrir conversa | a detalhar |
 | A definir | Sessão | Atividade: Menções, DMs, Tarefas | Abrir a mensagem; concluir e reabrir tarefa | a detalhar |
@@ -531,6 +531,9 @@ usuário conecta num banco que não é o seu. Senhas iguais ao nome do usuário,
 
 **Diferenças do ambiente local que mudam o código**
 
+- **Origem do Playwright no `next dev`:** o Next 16 bloqueia no desenvolvimento os recursos de dev
+  (HMR e chunks) para origens que não são `localhost`, e o `e2e` abre a web por `http://web:3000`.
+  Por isso o `next.config.ts` tem `allowedDevOrigins: ['web']`; sem isso a página não hidrata.
 - **Cookie de sessão:** localmente é só de host, em `localhost`, sem o atributo `Domain`; os
   cookies não separam portas, então `web` e `chat-api` o recebem. Em produção vale para os
   subdomínios (HLD 6.1).
