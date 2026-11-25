@@ -50,7 +50,8 @@ Rode dentro do contêiner, a partir da raiz do repositório: `docker compose exe
 | `pnpm build` | Compila para `dist/` |
 | `pnpm lint` | oxlint com checagem de tipos |
 | `pnpm exec tsc --noEmit` | Confere os tipos |
-| `pnpm format` | Prettier em `src/` e `test/` |
+| `pnpm format` | Formata `src/` e `test/` com o Prettier |
+| `pnpm format:check` | Confere o formato de `src/` e `test/` sem alterar nada |
 | `pnpm test` | Testes de unidade (`src/**/*.spec.ts`) |
 | `pnpm test:e2e` | Testes de ponta a ponta (`test/**/*.e2e-spec.ts`) |
 | `pnpm add <pacote>` | Instala uma dependência; nunca pelo host nem com `npm` |
@@ -64,6 +65,7 @@ Rodada uma vez antes de entregar uma tarefa que tocou a API, dentro do contêine
 
 ```bash
 docker compose exec chat-api pnpm lint
+docker compose exec chat-api pnpm format:check
 docker compose exec chat-api pnpm exec tsc --noEmit
 docker compose exec chat-api pnpm test
 docker compose exec chat-api pnpm test:e2e
