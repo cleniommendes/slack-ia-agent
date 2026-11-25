@@ -25,7 +25,10 @@ export class ProblemDetailsFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost): void {
     const problem = this.toProblem(exception);
     if (problem.code === 'internal_error') {
-      this.logger.error('Erro inesperado', exception);
+      this.logger.error(
+        'Erro inesperado',
+        exception instanceof Error ? exception.stack : String(exception),
+      );
     }
 
     const response = host.switchToHttp().getResponse<Response>();
