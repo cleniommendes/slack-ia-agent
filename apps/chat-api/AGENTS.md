@@ -4,9 +4,9 @@ A API do chat guarda pessoas, sessões, canais, mensagens, tarefas, notificaçõ
 serve o REST e o WebSocket. As regras gerais do projeto estão no [`AGENTS.md` da raiz](../../AGENTS.md);
 aqui ficam só as da API.
 
-**Situação:** esqueleto do Nest CLI. A base (configuração, banco, erros, testes) é a tarefa
-[F01-T01](../../.claude/docs/funcionalidades/01-login-e-sessao/tarefas/01-base-da-api-do-chat/tarefa.md).
-Antes de implementar, leia a tarefa e o `plano.md` dela.
+**Situação:** base pronta (configuração, banco, erros e testes, da
+[F01-T01](../../.claude/docs/funcionalidades/01-login-e-sessao/tarefas/01-base-da-api-do-chat/tarefa.md));
+as funcionalidades entram por cima. Antes de implementar uma tarefa, leia a tarefa e o `plano.md` dela.
 
 ## Stack
 
@@ -16,15 +16,16 @@ Antes de implementar, leia a tarefa e o `plano.md` dela.
 | Linguagem | TypeScript 6, `strict` | instalado |
 | Testes | Vitest (`vitest.config.ts` e `vitest.config.e2e.ts`) e Supertest | instalado |
 | Lint e formato | oxlint (`--type-aware`) e Prettier | instalado |
-| Configuração | `@nestjs/config` com schema zod | planejada (T01) |
-| Banco | TypeORM + `pg`, `typeorm-naming-strategies` | planejada (T01) |
-| Validação de entrada | `class-validator` e `class-transformer` no `ValidationPipe` | planejada (T01) |
+| Configuração | `@nestjs/config` com schema zod | instalado |
+| Banco | TypeORM + `pg`, `typeorm-naming-strategies`; CLI de migrações por `tsx` | instalado |
+| Validação de entrada | `class-validator` e `class-transformer` no `ValidationPipe` | instalado |
 | Contrato REST | `@nestjs/swagger`, snapshot em `openapi.json` | planejada |
 | Tempo real | Socket.IO | planejada (F03) |
 | Hash de senha | Argon2id | planejada (F01) |
 
-O plano da T01 foi escrito para Jest e ESLint, e o CLI gerou Vitest e oxlint. A escolha fica
-para o início da T01; até lá, não troque as ferramentas.
+Testes são Vitest e lint é oxlint (o plano da T01 falava em Jest e ESLint; a escolha foi manter
+as ferramentas do CLI). `process.env` fora de `src/config/` é barrado pela regra
+`node/no-process-env` do oxlint.
 
 ## NestJS desta versão
 
@@ -53,11 +54,14 @@ Rode dentro do contêiner, a partir da raiz do repositório: `docker compose exe
 | `pnpm format` | Formata `src/` e `test/` com o Prettier |
 | `pnpm format:check` | Confere o formato de `src/` e `test/` sem alterar nada |
 | `pnpm test` | Testes de unidade (`src/**/*.spec.ts`) |
-| `pnpm test:e2e` | Testes de ponta a ponta (`test/**/*.e2e-spec.ts`) |
+| `pnpm test:int` | Testes de integração (`**/*.int-spec.ts`) |
+| `pnpm test:e2e` | Testes de ponta a ponta (`test/**/*.e2e-spec.ts`), no banco `chat_test` |
+| `pnpm migration:generate migrations/<Nome>` | Gera uma migração a partir da diferença entre as entidades e o banco `chat` |
+| `pnpm migration:run` | Roda as migrações pendentes no banco `chat` |
+| `pnpm migration:revert` | Reverte a última migração rodada |
 | `pnpm add <pacote>` | Instala uma dependência; nunca pelo host nem com `npm` |
 
-Entram depois: `migration:generate migrations/<Nome>`, `migration:run` e `migration:revert`
-(T01); `test:int` (T01); o comando de contas (F01-T03, abaixo).
+Entra depois o comando de contas (F01-T03, abaixo).
 
 ## Verificação completa
 
@@ -68,11 +72,11 @@ docker compose exec chat-api pnpm lint
 docker compose exec chat-api pnpm format:check
 docker compose exec chat-api pnpm exec tsc --noEmit
 docker compose exec chat-api pnpm test
+docker compose exec chat-api pnpm test:int
 docker compose exec chat-api pnpm test:e2e
 ```
 
-Todos terminam sem erro. Uma tarefa que cria uma suíte nova (`test:int`, por exemplo) a
-acrescenta aqui.
+Todos terminam sem erro. Uma tarefa que cria uma suíte nova a acrescenta aqui.
 
 ## Estrutura de pastas
 
@@ -90,8 +94,7 @@ apps/chat-api/
   test/                 testes e2e e a base em test/support/
 ```
 
-Só `src/main.ts`, `src/app.module.ts` e as pastas de teste existem hoje; o resto chega com a T01
-e com cada funcionalidade. Os módulos de domínio ainda estão a definir no LLD.
+Os módulos de domínio chegam com cada funcionalidade e ainda estão a definir no LLD.
 
 ## Regras da API
 
@@ -150,7 +153,7 @@ e com cada funcionalidade. Os módulos de domínio ainda estão a definir no LLD
 - Um log que é efeito da regra é provado por um espião em `Logger.prototype.error`.
 - Teste de unidade só para função pura com muitos casos.
 
-A base (`createTestApp()`, `uniqueEmail()`, `globalSetup`) chega com a T01.
+A base de testes fica em `test/support/`: `createTestApp()`, `uniqueEmail()`, o `globalSetup` e o `test-env`.
 
 ## Comando de contas
 
