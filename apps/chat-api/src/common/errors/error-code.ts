@@ -1,27 +1,30 @@
-export type ErrorCode =
-  | 'validation_failed'
-  | 'not_found'
-  | 'payload_too_large'
-  | 'request_rejected'
-  | 'internal_error';
+import { HttpStatus } from '@nestjs/common';
 
 /**
- * Status HTTP de cada code. `request_rejected` guarda o status que veio do erro
- * original, e o valor daqui é só o padrão.
+ * Status HTTP e `detail` fixo de cada code. É o mapa único de erros da API.
+ * Em `request_rejected` o status é só o padrão: vale o do erro original.
  */
-export const ERROR_STATUS: Record<ErrorCode, number> = {
-  validation_failed: 400,
-  not_found: 404,
-  payload_too_large: 413,
-  request_rejected: 400,
-  internal_error: 500,
-};
+export const ERROR_PROBLEMS = {
+  validation_failed: {
+    status: HttpStatus.BAD_REQUEST,
+    detail: 'Os dados enviados são inválidos.',
+  },
+  not_found: {
+    status: HttpStatus.NOT_FOUND,
+    detail: 'Recurso não encontrado.',
+  },
+  payload_too_large: {
+    status: HttpStatus.PAYLOAD_TOO_LARGE,
+    detail: 'O corpo da requisição é grande demais.',
+  },
+  request_rejected: {
+    status: HttpStatus.BAD_REQUEST,
+    detail: 'A requisição não pôde ser atendida.',
+  },
+  internal_error: {
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    detail: 'Erro interno.',
+  },
+} as const;
 
-/** Texto fixo do `detail` de cada code, para erro que não é de domínio. */
-export const ERROR_DETAIL: Record<ErrorCode, string> = {
-  validation_failed: 'Os dados enviados são inválidos.',
-  not_found: 'Recurso não encontrado.',
-  payload_too_large: 'O corpo da requisição é grande demais.',
-  request_rejected: 'A requisição não pôde ser atendida.',
-  internal_error: 'Erro interno.',
-};
+export type ErrorCode = keyof typeof ERROR_PROBLEMS;

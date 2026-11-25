@@ -11,9 +11,7 @@ export type Env = z.infer<typeof envSchema>;
 export function parseEnv(raw: Record<string, unknown>): Env {
   const result = envSchema.safeParse(raw);
   if (!result.success) {
-    const names = [
-      ...new Set(result.error.issues.map((issue) => String(issue.path[0]))),
-    ];
+    const names = Object.keys(z.flattenError(result.error).fieldErrors);
     throw new Error(
       `Configuração inválida. Variáveis ausentes ou inválidas: ${names.join(', ')}`,
     );

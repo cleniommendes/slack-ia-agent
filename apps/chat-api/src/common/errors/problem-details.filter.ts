@@ -3,12 +3,13 @@ import {
   Catch,
   ExceptionFilter,
   HttpException,
+  HttpStatus,
   Logger,
 } from '@nestjs/common';
 import type { Response } from 'express';
 import { STATUS_CODES } from 'node:http';
 import { DomainError } from './domain.error.js';
-import { ERROR_DETAIL, ERROR_STATUS, type ErrorCode } from './error-code.js';
+import { ERROR_PROBLEMS, type ErrorCode } from './error-code.js';
 
 interface Problem {
   status: number;
@@ -43,7 +44,7 @@ export class ProblemDetailsFilter implements ExceptionFilter {
   private toProblem(exception: unknown): Problem {
     if (exception instanceof DomainError) {
       return {
-        status: ERROR_STATUS[exception.code],
+        status: ERROR_PROBLEMS[exception.code].status,
         code: exception.code,
         detail: exception.message,
       };
@@ -56,21 +57,20 @@ export class ProblemDetailsFilter implements ExceptionFilter {
 
     if (status !== undefined && status >= 400 && status < 500) {
       const code = clientErrorCode(status);
-      return { status, code, detail: ERROR_DETAIL[code] };
+      return { status, code, detail: ERROR_PROBLEMS[code].detail };
     }
 
     return {
-      status: ERROR_STATUS.internal_error,
+      ...ERROR_PROBLEMS.internal_error,
       code: 'internal_error',
-      detail: ERROR_DETAIL.internal_error,
     };
   }
 }
 
 function clientErrorCode(status: number): ErrorCode {
-  if (status === 400) return 'validation_failed';
-  if (status === 404) return 'not_found';
-  if (status === 413) return 'payload_too_large';
+  if (status === HttpStatus.BAD_REQUEST) return 'validation_failed';
+  if (status === HttpStatus.NOT_FOUND) return 'not_found';
+  if (status === HttpStatus.PAYLOAD_TOO_LARGE) return 'payload_too_large';
   return 'request_rejected';
 }
 

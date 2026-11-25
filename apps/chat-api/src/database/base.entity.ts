@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 
 /** Entidade base: id UUID v7 gerado na aplicação e datas em `timestamptz`. */
-export abstract class BaseEntity {
+export abstract class AppBaseEntity {
   @PrimaryColumn('uuid')
   id!: string;
 
