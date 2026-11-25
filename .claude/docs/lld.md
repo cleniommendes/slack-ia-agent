@@ -1,6 +1,6 @@
 # LLD — Clenio Chat
 
-2026-11-23 · Clenio · Status: rascunho · HLD: [hld.md](hld.md)
+2026-11-25 · Clenio · Status: rascunho · HLD: [hld.md](hld.md)
 
 **Onde mora cada fato**
 
@@ -15,10 +15,10 @@
 | Contrato REST do Serviço de agentes | `apps/agents/openapi.json`, gerado pelo FastAPI (planejado) |
 | Catálogo de códigos de erro | Os snapshots OpenAPI, como enum na resposta de erro de cada rota (planejado) |
 | Eventos do WebSocket | Tipos TypeScript em `packages/chat-events/` (planejado) |
-| Schema do Banco do chat | `apps/chat-api/migrations/`, migrações do TypeORM (planejado) |
+| Schema do Banco do chat | `apps/chat-api/migrations/`, migrações do TypeORM |
 | Schema do Banco dos agentes | A definir |
 | Schema do Banco de negócio | Script de carga em `apps/agents/scripts/` (planejado) |
-| Schema das variáveis de ambiente | O schema zod do módulo de configuração de cada projeto TypeScript (`apps/chat-api/src/config/env.schema.ts` e o da `web`, planejados); do projeto `agents`, a definir |
+| Schema das variáveis de ambiente | O schema zod do módulo de configuração de cada projeto TypeScript (`apps/chat-api/src/config/env.schema.ts`; o da `web` é planejado); do projeto `agents`, a definir |
 | Práticas e comandos | `apps/*/AGENTS.md`, um por app, apontados pelo `AGENTS.md` da raiz |
 
 Os snapshots OpenAPI ficam gravados no repositório, e a CI falha quando o código muda o contrato
@@ -37,7 +37,7 @@ apps/
   web/            Frontend/BFF (Next.js)                              existe
   chat-api/       API do chat (NestJS): REST, WebSocket e o comando   existe
                   de contas e permissões (HLD, seção 2)
-    migrations/   migrações do Banco do chat                          planejada
+    migrations/   migrações do Banco do chat                          existe
   agents/         Serviço de agentes e Worker (Python + ADK),         planejada
                   dois processos do mesmo projeto
     scripts/      script de carga do Banco de negócio                 planejada
