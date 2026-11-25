@@ -1,6 +1,6 @@
 # 02: Base da web e dos testes de ponta a ponta
 
-**Status:** a fazer
+**Status:** em andamento
 
 **O que construir:** a web deixa de ser o esqueleto do Next e passa a ter a base de que toda
 tela precisa:
