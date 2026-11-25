@@ -6,3 +6,4 @@
 .env.*
 !.env.example
 *.log
+/dist-cli
