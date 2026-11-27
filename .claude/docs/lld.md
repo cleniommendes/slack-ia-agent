@@ -1,6 +1,6 @@
 # LLD — Clenio Chat
 
-2026-11-25 · Clenio · Status: rascunho · HLD: [hld.md](hld.md)
+2026-11-27 · Clenio · Status: rascunho · HLD: [hld.md](hld.md)
 
 **Onde mora cada fato**
 
@@ -465,6 +465,7 @@ atualiza esse cache direto, sem nova requisição.
 | Duração da Sessão | 30 dias sem uso (PRD da F01, história 3) | API do chat | Variável `SESSION_TTL_DAYS`, padrão 30 |
 | Intervalo de renovação da Sessão | 1 dia | API do chat | Constante |
 | Validade do cookie de sessão | 400 dias, o teto do Chrome | BFF | Constante |
+| Tempo máximo da chamada da web à API do chat | 10 s | BFF | Constante `CHAT_API_TIMEOUT_MS` |
 | Tentativas de login | 5 (PRD da F01, história 2) | API do chat | Constante |
 | Janela de tentativas de login | 15 min (PRD da F01, história 2) | API do chat | Constante |
 | Bloqueio do login | 15 min (PRD da F01, história 2) | API do chat | Constante |
