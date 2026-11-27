@@ -19,7 +19,7 @@ const INVALID_CREDENTIALS_MESSAGE =
 const UNAVAILABLE_MESSAGE =
   'Não foi possível entrar agora. Confira sua conexão e tente de novo.';
 
-export function EntrarForm() {
+export function EntrarForm({ returnPath }: { returnPath: string | null }) {
   const [state, formAction, isPending] = useActionState(signIn, INITIAL_STATE);
   // Os campos são controlados: o React zera o formulário quando o envio termina, e a Pessoa
   // não pode perder o que digitou numa falha de rede.
@@ -89,6 +89,7 @@ export function EntrarForm() {
       noValidate
       className="flex flex-col gap-4"
     >
+      <input type="hidden" name="para" value={returnPath ?? ''} />
       <Field label="E-mail" htmlFor="email" error={fieldErrors.email}>
         <Input
           id="email"

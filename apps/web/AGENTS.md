@@ -90,7 +90,7 @@ apps/web/src/app/
     ui/                 primitivos, um arquivo por componente, em kebab-case (button.tsx); inclui
                         form-message.tsx, a mensagem de erro do formulário
     workspace-nav/      Rail e Sidebar; ainda virão user/, agent/, conversation/, message/...
-  utils/                cn.ts, initials.ts, session-cookie.ts
+  utils/                cn.ts, initials.ts, session-cookie.ts, return-path.ts (a regra do ?para=)
 apps/web/e2e/           testes do Playwright, fixtures.ts e o plano-de-testes.md
 ```
 
@@ -135,8 +135,10 @@ apps/web/e2e/           testes do Playwright, fixtures.ts e o plano-de-testes.md
 - O layout das telas logadas verifica a Sessão a cada renderização: 401 apaga o cookie e manda
   para `/entrar`; falha de rede ou 5xx mostra "Não foi possível verificar sua sessão", com
   "Tentar de novo", e não manda para `/entrar`.
-- O caminho de volta vai em `?para=`. Só vale caminho relativo que começa com `/` e não com `//`;
-  outro valor leva à Home.
+- O caminho de volta vai em `?para=`, com a busca do endereço. Só vale caminho relativo que começa
+  com `/` e não com `//`, sem `\` e sem caracteres de controle (`utils/return-path.ts`); outro
+  valor leva à Home, que também não leva `para`. O proxy passa o caminho pedido ao layout logado
+  pelo cabeçalho `x-clenio-path`, e o Server Action de entrar valida o `para` de novo.
 - As telas logadas saem com `Cache-Control: no-store`, e o layout logado recarrega no `pageshow`
   com `persisted`, para o histórico não mostrar conteúdo a quem saiu.
 

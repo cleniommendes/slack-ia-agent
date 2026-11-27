@@ -6,6 +6,7 @@ import {
   ChatApiUnavailableError,
   createSession,
 } from '@/app/services/chat-api.service';
+import { safeReturnPath } from '@/app/utils/return-path';
 import { setSessionCookie } from '@/app/utils/session-cookie';
 import { validateSignIn, type SignInFieldErrors } from './sign-in-schema';
 
@@ -25,6 +26,8 @@ export async function signIn(
 ): Promise<SignInState> {
   const email = String(formData.get('email') ?? '');
   const password = String(formData.get('password') ?? '');
+  // O campo vem do navegador: vale de novo a regra do caminho do chat.
+  const returnPath = safeReturnPath(formData.get('para')) ?? '/';
 
   const fieldErrors = validateSignIn(email, password);
   if (fieldErrors.email || fieldErrors.password) {
@@ -48,5 +51,5 @@ export async function signIn(
     throw error;
   }
 
-  redirect('/');
+  redirect(returnPath);
 }

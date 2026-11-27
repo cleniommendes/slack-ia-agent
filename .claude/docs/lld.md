@@ -1,6 +1,6 @@
 # LLD — Clenio Chat
 
-2026-11-27 · Clenio · Status: rascunho · HLD: [hld.md](hld.md)
+2026-11-28 · Clenio · Status: rascunho · HLD: [hld.md](hld.md)
 
 **Onde mora cada fato**
 
@@ -270,7 +270,7 @@ de eventos do WebSocket estão a definir. As rotas já decididas:
 | API do chat: `POST /v1/sessions` | existe | Entrar: "Estados e regras", seção "Sessão e login" |
 | API do chat: `GET /v1/sessions/current` | existe (renovar a Sessão: planejada) | Verificar e renovar a Sessão: mesma seção |
 | API do chat: `DELETE /v1/sessions/current` | planejada | Sair: mesma seção |
-| BFF: `GET /api/sessao/encerrar` | existe | Apaga o cookie de sessão e leva a `/entrar`, para o layout que recebe 401 (uma renderização não apaga cookie): "Cliente", "Sessão no cliente" |
+| BFF: `GET /api/sessao/encerrar` | existe | Apaga o cookie de sessão e leva a `/entrar`, com o `?para=` quando ele é um caminho do chat, para quem recebe 401 (uma renderização não apaga cookie): "Cliente", "Sessão no cliente" |
 | BFF: Server Actions entrar e sair | planejada | Gravam e apagam o cookie: "Conceitos transversais de implementação", seção "Segurança" |
 | Envio de mensagem no BFF (Server Action) | a detalhar | Mensagem gravada e agente sem receber o pedido: "Conceitos transversais de implementação", seção "Erros" |
 
@@ -431,13 +431,18 @@ atualiza esse cache direto, sem nova requisição.
   - Com falha de rede, 5xx ou tempo esgotado, mostra "Não foi possível verificar sua sessão",
     com "Tentar de novo", e não manda para "Entrar".
 - "Entrar", aberta com cookie, faz a mesma verificação:
-  - Com 200, vai para a Home.
-  - Com 401, apaga o cookie e mostra o formulário.
+  - Com 200, vai para a Home, sem usar o `para`.
+  - Com 401, apaga o cookie, mantém o `para` e mostra o formulário.
+  - Com falha de rede ou 5xx, mostra o formulário: a Pessoa não fica presa numa tela de erro.
 - Qualquer 401 vindo do BFF manda para "Entrar".
 - Um 401 no WebSocket fecha a conexão e manda para "Entrar".
-- **Voltar para onde ia:** quem é mandado para "Entrar" leva o caminho pedido em `?para=`.
-  - Só vale um caminho relativo que começa com `/` e não com `//`.
+- **Voltar para onde ia:** quem é mandado para "Entrar" leva o caminho pedido em `?para=`, com a
+  busca do endereço.
+  - Só vale um caminho relativo que começa com `/` e não com `//`, sem `\` (o navegador lê `/\x`
+    como `//x`) e sem caracteres de controle.
+  - A Home (`/`) não leva `para`: ela já é o destino padrão.
   - Sem ele, ou com outro valor, a Pessoa vai para a Home depois de entrar.
+  - O Server Action de entrar valida o `para` de novo, porque o campo vem do navegador.
 - **Histórico depois de sair:**
   - As telas logadas saem com `Cache-Control: no-store`.
   - O layout logado recarrega a página no evento `pageshow` com `persisted`.
