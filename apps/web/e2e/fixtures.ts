@@ -35,6 +35,20 @@ async function createPerson(): Promise<TestPerson> {
   return person;
 }
 
+/** Apaga as Sessões da Pessoa direto no banco, como o comando `revoke-sessions` da API. */
+export async function revokeSessions(person: TestPerson) {
+  const client = new Client({ connectionString: DATABASE_URL });
+  await client.connect();
+  try {
+    await client.query(
+      'DELETE FROM sessions USING people WHERE people.id = sessions.person_id AND people.email = $1',
+      [person.email],
+    );
+  } finally {
+    await client.end();
+  }
+}
+
 /** Entra pelo formulário da tela Entrar. É o único lugar que faz isso. */
 async function signInThroughForm(page: Page, person: TestPerson) {
   await page.goto('/entrar');
