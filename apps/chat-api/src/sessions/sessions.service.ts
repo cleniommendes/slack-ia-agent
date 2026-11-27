@@ -15,6 +15,11 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 export const SESSION_RENEWAL_INTERVAL_MS = DAY_MS;
 const TOKEN_BYTES = 32;
 
+export interface VerifiedSession {
+  person: Person;
+  sessionId: string;
+}
+
 export interface LoginResult {
   token: string;
   person: Person;
@@ -55,10 +60,10 @@ export class SessionsService {
   }
 
   /**
-   * A Pessoa da Sessão do token. A vencida é apagada na hora, e a válida é renovada quando passou
+   * A Pessoa e o id da Sessão do token. A vencida é apagada na hora, e a válida é renovada quando passou
    * o intervalo de renovação desde o último uso.
    */
-  async verify(token: string): Promise<Person> {
+  async verify(token: string): Promise<VerifiedSession> {
     const session = await this.sessions.findOne({
       where: { tokenHash: hashToken(token) },
       relations: { person: true },
@@ -74,7 +79,12 @@ export class SessionsService {
     }
 
     await this.renewIfDue(session, now);
-    return session.person;
+    return { person: session.person, sessionId: session.id };
+  }
+
+  /** Apaga a Sessão. Não falha se ela já foi apagada. */
+  async revoke(sessionId: string): Promise<void> {
+    await this.sessions.delete({ id: sessionId });
   }
 
   /** Apaga todas as Sessões da Pessoa e devolve quantas eram. */

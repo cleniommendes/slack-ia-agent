@@ -214,4 +214,41 @@ describe('Sessões', () => {
       expect(await findSession(app, token)).toBeNull();
     });
   });
+  describe('DELETE /v1/sessions/current', () => {
+    it('responde 204 e apaga só a Sessão apresentada', async () => {
+      const person = await createPerson(app);
+      const tokenA = await login(app, person.email, person.password);
+      const tokenB = await login(app, person.email, person.password);
+
+      const response = await request(app.getHttpServer())
+        .delete('/v1/sessions/current')
+        .set('Cookie', sessionCookie(app, tokenA));
+
+      const afterA = await request(app.getHttpServer())
+        .get('/v1/sessions/current')
+        .set('Cookie', sessionCookie(app, tokenA));
+      const afterB = await request(app.getHttpServer())
+        .get('/v1/sessions/current')
+        .set('Cookie', sessionCookie(app, tokenB));
+      expect(response.status).toBe(204);
+      expect(response.text).toBe('');
+      expect(await findSession(app, tokenA)).toBeNull();
+      expect(afterA.status).toBe(401);
+      expect(afterA.body).toEqual(UNAUTHENTICATED);
+      expect(afterB.status).toBe(200);
+    });
+
+    it.each([
+      ['sem cookie', undefined],
+      ['com token desconhecido', 'token-que-nao-existe'],
+    ])('responde 401 unauthenticated ao sair %s', async (_name, token) => {
+      const call = request(app.getHttpServer()).delete('/v1/sessions/current');
+      const response = token
+        ? await call.set('Cookie', sessionCookie(app, token))
+        : await call;
+
+      expect(response.status).toBe(401);
+      expect(response.body).toEqual(UNAUTHENTICATED);
+    });
+  });
 });
