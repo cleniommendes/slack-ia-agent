@@ -1,6 +1,6 @@
 # 05: Voltar para onde ia
 
-**Status:** a fazer
+**Status:** em andamento
 
 **O que construir:** a Pessoa que abre um endereço do chat sem Sessão, por um link por exemplo,
 é levada a "Entrar" e, depois de entrar, cai nesse endereço. Sem endereço pedido, ou com um que
