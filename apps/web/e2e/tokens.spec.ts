@@ -16,7 +16,7 @@ test.describe('tokens do design system', () => {
   test('usa os tokens do tema claro por padrão', async ({ page }) => {
     await page.emulateMedia({ colorScheme: 'dark' });
 
-    await page.goto('/');
+    await page.goto('/entrar');
 
     expect(await tokenColor(page, '--surface')).toBe('rgb(255, 255, 255)');
     expect(await tokenColor(page, '--fg')).toBe('rgb(29, 28, 29)');
@@ -27,7 +27,7 @@ test.describe('tokens do design system', () => {
   test('troca para os tokens do escuro só com data-theme=dark', async ({
     page,
   }) => {
-    await page.goto('/');
+    await page.goto('/entrar');
 
     await page.evaluate(() =>
       document.documentElement.setAttribute('data-theme', 'dark'),
@@ -42,13 +42,13 @@ test.describe('tokens do design system', () => {
   });
 
   test('usa a fonte Lato', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/entrar');
 
     await expect(page.locator('body')).toHaveCSS('font-family', /lato/i);
   });
 
   test('não serve mais a página inicial do esqueleto', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/entrar');
 
     await expect(page.getByText('To get started')).toHaveCount(0);
   });

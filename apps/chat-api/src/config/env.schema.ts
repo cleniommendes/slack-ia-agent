@@ -3,6 +3,8 @@ import { z } from 'zod';
 export const envSchema = z.object({
   DATABASE_URL: z.string().min(1),
   PORT: z.coerce.number().int().positive().default(3000),
+  SESSION_COOKIE_NAME: z.string().min(1),
+  SESSION_TTL_DAYS: z.coerce.number().int().positive().default(30),
 });
 
 export type Env = z.infer<typeof envSchema>;

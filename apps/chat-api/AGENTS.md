@@ -21,7 +21,7 @@ as funcionalidades entram por cima. Antes de implementar uma tarefa, leia a tare
 | Validação de entrada | `class-validator` e `class-transformer` no `ValidationPipe` | instalado |
 | Contrato REST | `@nestjs/swagger`, snapshot em `openapi.json` | planejada |
 | Tempo real | Socket.IO | planejada (F03) |
-| Hash de senha | Argon2id | planejada (F01) |
+| Hash de senha | Argon2id, por `@node-rs/argon2` | instalado |
 
 Testes são Vitest e lint é oxlint (o plano da T01 falava em Jest e ESLint; a escolha foi manter
 as ferramentas do CLI). `process.env` fora de `src/config/` é barrado pela regra
@@ -59,9 +59,10 @@ Rode dentro do contêiner, a partir da raiz do repositório: `docker compose exe
 | `pnpm migration:generate migrations/<Nome>` | Gera uma migração a partir da diferença entre as entidades e o banco `chat` |
 | `pnpm migration:run` | Roda as migrações pendentes no banco `chat` |
 | `pnpm migration:revert` | Reverte a última migração rodada |
+| `pnpm accounts create <e-mail> <nome>` | Comando de contas: cria a conta de uma Pessoa. A senha é lida do terminal, sem eco (precisa de TTY: `docker compose exec`, sem `-T`) |
 | `pnpm add <pacote>` | Instala uma dependência; nunca pelo host nem com `npm` |
 
-Entra depois o comando de contas (F01-T03, abaixo).
+As outras operações do comando de contas entram com as tarefas que as usam (abaixo).
 
 ## Verificação completa
 
@@ -157,10 +158,15 @@ A base de testes fica em `test/support/`: `createTestApp()`, `uniqueEmail()`, o 
 
 ## Comando de contas
 
-Planejado na F01. Um script da própria API, rodado no contêiner, que sobe o contexto do Nest sem
-HTTP e chama os mesmos services de Pessoas e Sessões. Operações: `create`, `reset-password`,
-`revoke-sessions` e `purge-expired-sessions`. A senha é lida do terminal sem eco, nunca de
-argumento nem de variável. O comando exato entra na tabela "Comandos" na tarefa que o implementa.
+Um script da própria API, rodado no contêiner, que sobe o contexto do Nest sem HTTP e chama os
+mesmos services de Pessoas e Sessões (`src/accounts/`). O `pnpm accounts` compila `src` para
+`dist-cli/` com o `tsc` e roda o `accounts.cli.js` de lá, porque o Nest precisa dos metadados dos
+decorators (o `tsx` não os emite) e o `nest build` apagaria o `dist/` de um `start:dev` aberto.
+
+Operações: `create` (existe), `reset-password`, `revoke-sessions` e `purge-expired-sessions`
+(planejadas, nas tarefas da F01 que as usam). A senha é lida do terminal sem eco, nunca de
+argumento nem de variável; sem terminal, o comando recusa. A leitura fica atrás de `PasswordPrompt`,
+que o teste de integração substitui.
 
 ## Onde ler mais
 

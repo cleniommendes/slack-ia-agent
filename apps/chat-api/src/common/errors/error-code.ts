@@ -21,6 +21,18 @@ export const ERROR_PROBLEMS = {
     status: HttpStatus.BAD_REQUEST,
     detail: 'A requisição não pôde ser atendida.',
   },
+  invalid_credentials: {
+    status: HttpStatus.UNAUTHORIZED,
+    detail: 'E-mail ou senha incorretos.',
+  },
+  unauthenticated: {
+    status: HttpStatus.UNAUTHORIZED,
+    detail: 'Sessão inválida ou vencida.',
+  },
+  email_already_used: {
+    status: HttpStatus.CONFLICT,
+    detail: 'Já existe uma conta com este e-mail.',
+  },
   internal_error: {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     detail: 'Erro interno.',

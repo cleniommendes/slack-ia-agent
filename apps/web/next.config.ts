@@ -5,6 +5,8 @@ import { getEnv } from './src/app/config/env';
 getEnv();
 
 const nextConfig: NextConfig = {
+  // O Playwright, no contêiner e2e, abre a web por http://web:3000 (não é localhost).
+  allowedDevOrigins: ['web'],
   /* config options here */
   cacheComponents: true,
   partialPrefetching: true,

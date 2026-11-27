@@ -16,7 +16,7 @@ projeto estão no [`AGENTS.md` da raiz](../../AGENTS.md); aqui ficam só as da w
 
 **Situação:** base pronta (configuração, tokens do design system e Playwright, da
 [F01-T02](../../.claude/docs/funcionalidades/01-login-e-sessao/tarefas/02-base-da-web-e-dos-testes-e2e/tarefa.md));
-as telas entram por cima, sem rota `/` até a F01-T03. Antes de implementar uma tarefa, leia a tarefa
+as telas entram por cima (Entrar e a Home existem desde a F01-T03). Antes de implementar uma tarefa, leia a tarefa
 e o `plano.md` dela.
 
 ## Stack
@@ -77,18 +77,22 @@ Todos terminam sem erro.
 ## Estrutura de pastas
 
 ```
+apps/web/src/proxy.ts   sem cookie de sessão, manda para /entrar (o Next 16 chama de proxy)
 apps/web/src/app/
   layout.tsx, globals.css
   config/env.ts         único lugar que lê process.env (schema zod); getEnv()
-  (rotas)               /entrar, / (Home) e as telas logadas, sob um layout comum
+  entrar/               tela Entrar: page.tsx, entrar-form.tsx (client) e actions.ts (signIn)
+  (app)/                telas logadas: layout.tsx verifica a Sessão na API; page.tsx é a Home (/)
+  api/sessao/encerrar/  route handler que apaga o cookie e leva a /entrar
+  services/             services HTTP: o único lugar que chama a API do chat com fetch
   components/
     ui/                 primitivos, um arquivo por componente, em kebab-case (button.tsx)
-    <domínio>/          user/, agent/, conversation/, message/, notification/, task/,
-                        workspace-nav/, profile/
-  utils/cn.ts           helper cn (clsx + tailwind-merge)
+    workspace-nav/      Rail e Sidebar; ainda virão user/, agent/, conversation/, message/...
+  utils/                cn.ts, initials.ts, session-cookie.ts
+apps/web/e2e/           testes do Playwright, fixtures.ts e o plano-de-testes.md
 ```
 
-- Tudo mora dentro de `src/app/`.
+- Tudo mora dentro de `src/app/`, exceto o `src/proxy.ts`.
 - Um componente do Figma corresponde a um componente no código, com o mesmo nome em PascalCase.
   Antes de criar um, procure em `src/app/components/` um que já cubra o caso.
 - As telas do Figma viram rotas e layouts, compostos a partir dos componentes.
@@ -110,7 +114,8 @@ apps/web/src/app/
 
 - **O navegador fala só com a web.** As mutações são Server Actions, que conferem o `Origin`
   contra CSRF. Não crie rota REST para o navegador sem combinar.
-- **Nenhum componente nem Server Action chama `fetch` direto.** Cada chamada à API do chat passa
+- **Nenhum componente nem Server Action chama `fetch` direto** (o ESLint barra `fetch` em
+  `src/app/` fora de `services/`). Cada chamada à API do chat passa
   por um service HTTP da web, que conhece o endereço, repassa o cookie de sessão no cabeçalho
   `Cookie` e traduz o `problem+json` da API.
 - A web chama a API pela rede interna (`CHAT_API_URL`, `http://chat-api:3000` no local). O

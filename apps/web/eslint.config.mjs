@@ -21,6 +21,25 @@ const eslintConfig = defineConfig([
       ],
     },
   },
+  // Só os services chamam a API do chat: nenhum componente nem Server Action usa `fetch` direto.
+  {
+    files: ['src/app/**/*.{ts,tsx}'],
+    ignores: ['src/app/services/**'],
+    rules: {
+      'no-restricted-globals': [
+        'error',
+        {
+          name: 'fetch',
+          message: 'Chame a API do chat por um service de src/app/services/.',
+        },
+      ],
+    },
+  },
+  // O `use` das fixtures do Playwright não é um hook do React.
+  {
+    files: ['e2e/**/*.ts'],
+    rules: { 'react-hooks/rules-of-hooks': 'off' },
+  },
   // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:
@@ -28,6 +47,9 @@ const eslintConfig = defineConfig([
     'out/**',
     'build/**',
     'next-env.d.ts',
+    'playwright-report/**',
+    'test-results/**',
+    '.playwright-cli/**',
   ]),
 ]);
 
