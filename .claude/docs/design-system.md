@@ -32,7 +32,7 @@ As descrições dos componentes no Figma citam arquivos de uma implementação d
 | Estilo | Tailwind CSS 4, configurado só em CSS (`@theme`), sem `tailwind.config` | Instalado |
 | Build | Turbopack, com o loader `@tailwindcss/turbopack` no `next.config.ts` | Instalado |
 | Ícones | `lucide-react` | A instalar |
-| Primitivos acessíveis | `radix-ui` (Dialog, AlertDialog, DropdownMenu, Tooltip, Switch, Tabs) | A instalar |
+| Primitivos acessíveis | `radix-ui` (Dialog, AlertDialog, DropdownMenu, Tooltip, Switch, Tabs) | Instalado (F01-T07); só o DropdownMenu está em uso |
 | Variantes | `class-variance-authority`, com `clsx` e `tailwind-merge` num helper `cn` em `src/app/utils/cn.ts` | A instalar |
 | Toasts | `sonner` | A instalar |
 | Fonte | Lato pelo `next/font/google` | Instalado |

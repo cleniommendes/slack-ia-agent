@@ -1,6 +1,6 @@
 # 07: Sair
 
-**Status:** em andamento
+**Status:** concluída
 
 **O que construir:** a Pessoa abre o menu do avatar em qualquer tela logada e sai. A Sessão
 daquele navegador acaba, e ela vai para "Entrar". As outras abas do mesmo navegador vão para
@@ -16,20 +16,20 @@ em outros navegadores continuam valendo. Referências:
 
 **Bloqueada por:** 03 (Entrar com uma conta criada por comando e ver a Home)
 
-- [ ] **CA1** · `DELETE /v1/sessions/current` apaga a Sessão apresentada e responde 204. Outra
+- [x] **CA1** · `DELETE /v1/sessions/current` apaga a Sessão apresentada e responde 204. Outra
   Sessão da mesma Pessoa continua valendo, e sem Sessão a resposta é 401 `unauthenticated`.
-- [ ] **CA2** · O avatar do Rail abre o UserMenu, por mouse e teclado, com o DropdownMenu do
+- [x] **CA2** · O avatar do Rail abre o UserMenu, por mouse e teclado, com o DropdownMenu do
   Radix. O menu tem o cabeçalho, com o avatar de iniciais e o nome sem a linha de presença, e um
   único item, "Sair do Clenio", como no frame do Figma da Casca.
-- [ ] **CA3** · "Sair do Clenio" chama o Server Action de sair, que apaga a Sessão na API,
+- [x] **CA3** · "Sair do Clenio" chama o Server Action de sair, que apaga a Sessão na API,
   apaga o cookie e leva a `/entrar`. Se a API falhar, o cookie é apagado do mesmo jeito e a
   Pessoa vai para `/entrar`.
-- [ ] **CA4** · As telas logadas saem com `Cache-Control: no-store`, e o layout logado recarrega a
+- [x] **CA4** · As telas logadas saem com `Cache-Control: no-store`, e o layout logado recarrega a
   página no `pageshow` com `persisted`.
-- [ ] **CA5** · Os testes de ponta a ponta da API provam o CA1.
-- [ ] **CA6** · O Playwright prova:
+- [x] **CA5** · Os testes de ponta a ponta da API provam o CA1.
+- [x] **CA6** · O Playwright prova:
   - sair pelo menu usando só o teclado;
   - a outra aba indo para "Entrar" na próxima navegação;
   - voltar pelo histórico depois de sair sem mostrar a Home.
-- [ ] **CA7** · A validação visual do menu aberto, nos dois temas, está registrada na pasta desta
+- [x] **CA7** · A validação visual do menu aberto, nos dois temas, está registrada na pasta desta
   tarefa.

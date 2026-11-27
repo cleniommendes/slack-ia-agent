@@ -7,6 +7,8 @@ getEnv();
 const nextConfig: NextConfig = {
   // O Playwright, no contêiner e2e, abre a web por http://web:3000 (não é localhost).
   allowedDevOrigins: ['web'],
+  // O indicador do `next dev` ficava sobre o avatar do Rail (canto inferior esquerdo) e engolia o clique.
+  devIndicators: { position: 'bottom-right' },
   /* config options here */
   cacheComponents: true,
   partialPrefetching: true,

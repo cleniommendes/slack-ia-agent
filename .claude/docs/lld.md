@@ -1,6 +1,6 @@
 # LLD — Clenio Chat
 
-2026-11-29 · Clenio · Status: rascunho · HLD: [hld.md](hld.md)
+2026-11-30 · Clenio · Status: rascunho · HLD: [hld.md](hld.md)
 
 **Onde mora cada fato**
 
@@ -270,7 +270,7 @@ de eventos do WebSocket estão a definir. As rotas já decididas:
 | --- | --- | --- |
 | API do chat: `POST /v1/sessions` | existe | Entrar: "Estados e regras", seção "Sessão e login" |
 | API do chat: `GET /v1/sessions/current` | existe | Verificar e renovar a Sessão: mesma seção |
-| API do chat: `DELETE /v1/sessions/current` | planejada | Sair: mesma seção |
+| API do chat: `DELETE /v1/sessions/current` | existe | Sair: mesma seção |
 | BFF: `GET /api/sessao/encerrar` | existe | Apaga o cookie de sessão e leva a `/entrar`, com o `?para=` quando ele é um caminho do chat, para quem recebe 401 (uma renderização não apaga cookie): "Cliente", "Sessão no cliente" |
 | BFF: Server Actions entrar e sair | planejada | Gravam e apagam o cookie: "Conceitos transversais de implementação", seção "Segurança" |
 | Envio de mensagem no BFF (Server Action) | a detalhar | Mensagem gravada e agente sem receber o pedido: "Conceitos transversais de implementação", seção "Erros" |
@@ -410,7 +410,7 @@ quando apresentadas ("Estados e regras", seção "Sessão e login") e pela opera
 | Rota | Acesso | Lê | Ações | Situação |
 | --- | --- | --- | --- | --- |
 | `/entrar` | Público | Sessão, quando há cookie | Entrar com e-mail e senha | existe |
-| `/` (Home) | Sessão | Pessoa da Sessão | Sair | existe (Sair: planejada) |
+| `/` (Home) | Sessão | Pessoa da Sessão | Sair | existe |
 | `/conversas/<id>` | Sessão | Histórico da conversa | Enviar, editar, apagar, citar; "digitando"; botões de resposta pronta | planejada |
 | A definir (lateral) | Sessão | Conversas, com não lidas e menções | Abrir conversa | a detalhar |
 | A definir | Sessão | Atividade: Menções, DMs, Tarefas | Abrir a mensagem; concluir e reabrir tarefa | a detalhar |
@@ -593,7 +593,8 @@ As decisões que mudam o desenho estão no HLD, seção 10.
 - [x] Biblioteca de validação das variáveis nos projetos TypeScript: zod. No projeto `agents`,
       segue em aberto.
 - [ ] Parser da conferência de somente leitura (pglast ou sqlglot).
-- [ ] Biblioteca de log estruturado (pino e structlog, ou o logger de cada framework).
+- [ ] Biblioteca de log estruturado (pino e structlog, ou o logger de cada framework). Até lá, a web não
+      registra a falha da API ao sair (o cookie é apagado de qualquer jeito).
 - [ ] Porquê das escolhas sem motivo registrado: App Router, SWR, FastAPI próprio, uv; ADRs 0017,
       0018, 0019, 0021 e 0022.
 

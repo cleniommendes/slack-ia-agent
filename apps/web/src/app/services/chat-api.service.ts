@@ -43,6 +43,7 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
     const problem = await response.json().catch(() => null);
     throw new ChatApiError(response.status, problem?.code ?? 'unknown');
   }
+  if (response.status === 204) return undefined as T;
   return response.json() as Promise<T>;
 }
 
@@ -64,4 +65,13 @@ export function getCurrentSession(
 ): Promise<{ person: PersonView }> {
   const cookie = `${getEnv().SESSION_COOKIE_NAME}=${token}`;
   return request('/sessions/current', { headers: { Cookie: cookie } });
+}
+
+/** Sai: apaga a Sessão do token na API. */
+export function deleteCurrentSession(token: string): Promise<void> {
+  const cookie = `${getEnv().SESSION_COOKIE_NAME}=${token}`;
+  return request('/sessions/current', {
+    method: 'DELETE',
+    headers: { Cookie: cookie },
+  });
 }

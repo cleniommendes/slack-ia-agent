@@ -7,7 +7,9 @@ import type { Person } from '../people/person.entity.js';
 import { SessionsService } from './sessions.service.js';
 import { UnauthenticatedError } from './unauthenticated.error.js';
 
-export type AuthenticatedRequest = Request & { auth?: { person: Person } };
+export type AuthenticatedRequest = Request & {
+  auth?: { person: Person; sessionId: string };
+};
 
 /** Verifica a Sessão do cookie. Reaproveitado pelas rotas logadas e, na F03, pelo WebSocket. */
 @Injectable()
@@ -26,7 +28,7 @@ export class SessionGuard implements CanActivate {
       throw new UnauthenticatedError();
     }
 
-    request.auth = { person: await this.sessions.verify(token) };
+    request.auth = await this.sessions.verify(token);
     return true;
   }
 }

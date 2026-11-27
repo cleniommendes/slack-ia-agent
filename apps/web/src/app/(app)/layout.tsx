@@ -1,6 +1,7 @@
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
+import { ReloadOnRestore } from '@/app/components/workspace-nav/reload-on-restore';
 import { Rail } from '@/app/components/workspace-nav/rail';
 import { Sidebar } from '@/app/components/workspace-nav/sidebar';
 import {
@@ -42,6 +43,7 @@ async function Shell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="flex h-dvh">
+      <ReloadOnRestore />
       <Rail person={person} />
       <Sidebar />
       <main className="flex min-w-0 flex-1 flex-col items-center justify-center bg-surface">

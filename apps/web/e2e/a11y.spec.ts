@@ -58,4 +58,14 @@ test.describe('acessibilidade e teclado', () => {
 
     await page.waitForURL((url) => url.pathname === '/');
   });
+  test('o menu do avatar aberto não tem violações do axe', async ({
+    loggedInPage,
+  }) => {
+    await loggedInPage
+      .getByRole('button', { name: /menu da conta de/ })
+      .click();
+    await expect(loggedInPage.getByRole('menu')).toBeVisible();
+
+    expect(await violationsOf(loggedInPage)).toEqual([]);
+  });
 });
