@@ -1,6 +1,6 @@
 # 06: Continuar logada, e Sessão que vence ou é revogada
 
-**Status:** a fazer
+**Status:** em andamento
 
 **O que construir:**
 - A Pessoa continua logada em todas as abas e depois de fechar o navegador, enquanto usar o chat
