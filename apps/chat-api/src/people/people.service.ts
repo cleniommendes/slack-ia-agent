@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { hash, verify } from '@node-rs/argon2';
-import { QueryFailedError, Repository } from 'typeorm';
+import { EntityManager, QueryFailedError, Repository } from 'typeorm';
 import { EmailAlreadyUsedError } from './email-already-used.error.js';
 import { Person } from './person.entity.js';
 
@@ -39,6 +39,19 @@ export class PeopleService {
       }
       throw error;
     }
+  }
+
+  /** Troca o hash da senha. Com `manager`, entra na transação de quem chamou. */
+  async setPassword(
+    personId: string,
+    password: string,
+    manager?: EntityManager,
+  ): Promise<void> {
+    const repository = manager?.getRepository(Person) ?? this.people;
+    await repository.update(
+      { id: personId },
+      { passwordHash: await hash(password) },
+    );
   }
 
   findByEmail(email: string): Promise<Person | null> {
