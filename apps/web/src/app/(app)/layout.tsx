@@ -1,3 +1,4 @@
+import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 import { Rail } from '@/app/components/workspace-nav/rail';
@@ -7,9 +8,8 @@ import {
   getCurrentSession,
   type PersonView,
 } from '@/app/services/chat-api.service';
+import { REQUEST_PATH_HEADER, endSessionPath } from '@/app/utils/return-path';
 import { getSessionToken } from '@/app/utils/session-cookie';
-
-const END_SESSION_PATH = '/api/sessao/encerrar';
 
 export default function LoggedInLayout({
   children,
@@ -27,14 +27,15 @@ export default function LoggedInLayout({
 /** Verifica a Sessão na API a cada renderização e monta o shell com a Pessoa. */
 async function Shell({ children }: { children: React.ReactNode }) {
   const token = await getSessionToken();
-  if (!token) redirect(END_SESSION_PATH);
+  const requestedPath = (await headers()).get(REQUEST_PATH_HEADER);
+  if (!token) redirect(endSessionPath(requestedPath));
 
   let person: PersonView;
   try {
     ({ person } = await getCurrentSession(token));
   } catch (error) {
     if (error instanceof ChatApiError && error.status === 401) {
-      redirect(END_SESSION_PATH);
+      redirect(endSessionPath(requestedPath));
     }
     throw error;
   }
