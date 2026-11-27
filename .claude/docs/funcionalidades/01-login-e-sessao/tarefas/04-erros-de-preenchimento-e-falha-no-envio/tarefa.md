@@ -1,6 +1,6 @@
 # 04: Erros de preenchimento e falha no envio ao entrar
 
-**Status:** a fazer
+**Status:** em andamento
 
 **O que construir:** a Pessoa que preenche errado o login descobre o que corrigir antes de
 qualquer envio. Quando a rede ou o servidor falha no envio, ela vê um erro diferente da mensagem
