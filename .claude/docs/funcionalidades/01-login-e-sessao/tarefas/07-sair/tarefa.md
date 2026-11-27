@@ -1,6 +1,6 @@
 # 07: Sair
 
-**Status:** a fazer
+**Status:** em andamento
 
 **O que construir:** a Pessoa abre o menu do avatar em qualquer tela logada e sai. A Sessão
 daquele navegador acaba, e ela vai para "Entrar". As outras abas do mesmo navegador vão para
