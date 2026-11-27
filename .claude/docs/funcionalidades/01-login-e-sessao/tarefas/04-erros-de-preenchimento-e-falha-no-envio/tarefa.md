@@ -1,6 +1,6 @@
 # 04: Erros de preenchimento e falha no envio ao entrar
 
-**Status:** em andamento
+**Status:** concluída
 
 **O que construir:** a Pessoa que preenche errado o login descobre o que corrigir antes de
 qualquer envio. Quando a rede ou o servidor falha no envio, ela vê um erro diferente da mensagem
@@ -24,7 +24,7 @@ tela atinge a nota 100 de acessibilidade. Referências:
   - A mensagem é do formulário, entre a Senha e o botão, com `role="alert"`.
   - O e-mail e a senha continuam preenchidos, e o foco não muda.
   - Esse padrão de mensagem do formulário é o que a tarefa 08 reaproveita.
-- [ ] **CA4** · No Figma existe o frame "Login / Falha no envio", feito com os componentes e as
+- [x] **CA4** · No Figma existe o frame "Login / Falha no envio", feito com os componentes e as
   variables locais antes do código, e a tela bate com ele.
 - [x] **CA5** · Pelo teclado, Tab percorre E-mail, Senha e o botão, e Enter envia.
 - [x] **CA6** · O Playwright prova o CA1, o foco do CA2, o fluxo só pelo teclado do CA5 e a
