@@ -16,12 +16,28 @@ export class ChatApiError extends Error {
   }
 }
 
+/** A API do chat não respondeu: falha de rede ou tempo esgotado. */
+export class ChatApiUnavailableError extends Error {
+  constructor() {
+    super('A API do chat não respondeu.');
+  }
+}
+
+/** Tempo máximo de uma chamada à API do chat (LLD, "Valores e configuração"). */
+export const CHAT_API_TIMEOUT_MS = 10_000;
+
 // O único lugar da web que chama a API do chat (regra do ESLint).
 async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
-  const response = await fetch(`${getEnv().CHAT_API_URL}/v1${path}`, {
-    ...init,
-    cache: 'no-store',
-  });
+  let response: Response;
+  try {
+    response = await fetch(`${getEnv().CHAT_API_URL}/v1${path}`, {
+      ...init,
+      cache: 'no-store',
+      signal: AbortSignal.timeout(CHAT_API_TIMEOUT_MS),
+    });
+  } catch {
+    throw new ChatApiUnavailableError();
+  }
 
   if (!response.ok) {
     const problem = await response.json().catch(() => null);

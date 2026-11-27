@@ -81,12 +81,14 @@ apps/web/src/proxy.ts   sem cookie de sessão, manda para /entrar (o Next 16 cha
 apps/web/src/app/
   layout.tsx, globals.css
   config/env.ts         único lugar que lê process.env (schema zod); getEnv()
-  entrar/               tela Entrar: page.tsx, entrar-form.tsx (client) e actions.ts (signIn)
+  entrar/               tela Entrar: page.tsx, entrar-form.tsx (client), actions.ts (signIn) e
+                        sign-in-schema.ts (a validação, usada pelo formulário e pelo Server Action)
   (app)/                telas logadas: layout.tsx verifica a Sessão na API; page.tsx é a Home (/)
   api/sessao/encerrar/  route handler que apaga o cookie e leva a /entrar
   services/             services HTTP: o único lugar que chama a API do chat com fetch
   components/
-    ui/                 primitivos, um arquivo por componente, em kebab-case (button.tsx)
+    ui/                 primitivos, um arquivo por componente, em kebab-case (button.tsx); inclui
+                        form-message.tsx, a mensagem de erro do formulário
     workspace-nav/      Rail e Sidebar; ainda virão user/, agent/, conversation/, message/...
   utils/                cn.ts, initials.ts, session-cookie.ts
 apps/web/e2e/           testes do Playwright, fixtures.ts e o plano-de-testes.md

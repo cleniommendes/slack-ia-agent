@@ -1,3 +1,4 @@
+import type { Page } from '@playwright/test';
 import { expect, test } from './fixtures';
 
 const SESSION_COOKIE = 'clenio_session';
@@ -91,5 +92,115 @@ test.describe('tela Entrar', () => {
     expect(messageBox.y).toBeGreaterThan(
       passwordBox.y + passwordBox.height - 1,
     );
+  });
+  test.describe('erros de preenchimento', () => {
+    const EMAIL_MESSAGE = 'Informe um e-mail válido, como nome@empresa.com.';
+    const PASSWORD_MESSAGE = 'Informe sua senha.';
+
+    async function countLoginPosts(page: Page) {
+      const counter = { posts: 0 };
+      await page.route('**/entrar', async (route) => {
+        if (route.request().method() === 'POST') counter.posts += 1;
+        await route.continue();
+      });
+      return counter;
+    }
+
+    test('mostra a mensagem do e-mail vazio e do e-mail fora do formato sem enviar', async ({
+      page,
+    }) => {
+      const counter = await countLoginPosts(page);
+      await page.goto('/entrar');
+      await page.getByLabel('Senha').fill('qualquer');
+
+      await page.getByRole('button', { name: 'Entrar' }).click();
+      await expect(page.getByText(EMAIL_MESSAGE)).toBeVisible();
+
+      await page.getByLabel('E-mail').fill('ana@');
+      await page.getByRole('button', { name: 'Entrar' }).click();
+      await expect(page.getByText(EMAIL_MESSAGE)).toBeVisible();
+      expect(counter.posts).toBe(0);
+    });
+
+    test('mostra a mensagem da senha vazia sem enviar', async ({
+      page,
+      person,
+    }) => {
+      const counter = await countLoginPosts(page);
+      await page.goto('/entrar');
+      await page.getByLabel('E-mail').fill(person.email);
+
+      await page.getByRole('button', { name: 'Entrar' }).click();
+
+      await expect(page.getByText(PASSWORD_MESSAGE)).toBeVisible();
+      await expect(page.getByText(EMAIL_MESSAGE)).toHaveCount(0);
+      expect(counter.posts).toBe(0);
+    });
+
+    test('mostra as duas mensagens juntas', async ({ page }) => {
+      await page.goto('/entrar');
+
+      await page.getByRole('button', { name: 'Entrar' }).click();
+
+      await expect(page.getByText(EMAIL_MESSAGE)).toBeVisible();
+      await expect(page.getByText(PASSWORD_MESSAGE)).toBeVisible();
+    });
+
+    test('valida também no servidor, sem JavaScript', async ({ browser }) => {
+      const context = await browser.newContext({ javaScriptEnabled: false });
+      const page = await context.newPage();
+      await page.goto('http://web:3000/entrar');
+
+      await page.getByRole('button', { name: 'Entrar' }).click();
+
+      await expect(page.getByText(EMAIL_MESSAGE)).toBeVisible();
+      await expect(page.getByText(PASSWORD_MESSAGE)).toBeVisible();
+      expect(new URL(page.url()).pathname).toBe('/entrar');
+      await context.close();
+    });
+
+    test('aceita o e-mail de teste com domínio .local', async ({
+      page,
+      person,
+    }) => {
+      await page.goto('/entrar');
+      await page.getByLabel('E-mail').fill(person.email);
+      await page.getByLabel('Senha').fill(person.password);
+
+      await page.getByRole('button', { name: 'Entrar' }).click();
+
+      await page.waitForURL((url) => url.pathname === '/');
+    });
+
+    test('foca o primeiro campo inválido', async ({ page, person }) => {
+      await page.goto('/entrar');
+      await page.getByRole('button', { name: 'Entrar' }).click();
+      await expect(page.getByLabel('E-mail')).toBeFocused();
+
+      await page.getByLabel('E-mail').fill(person.email);
+      await page.getByRole('button', { name: 'Entrar' }).click();
+      await expect(page.getByLabel('Senha')).toBeFocused();
+    });
+
+    test('liga o campo com erro à mensagem por aria-invalid e aria-describedby', async ({
+      page,
+      person,
+    }) => {
+      await page.goto('/entrar');
+      await page.getByLabel('E-mail').fill(person.email);
+
+      await page.getByRole('button', { name: 'Entrar' }).click();
+
+      const password = page.getByLabel('Senha');
+      const email = page.getByLabel('E-mail');
+      await expect(password).toHaveAttribute('aria-invalid', 'true');
+      await expect(password).toHaveAttribute(
+        'aria-describedby',
+        'password-error',
+      );
+      await expect(password).toHaveAccessibleDescription(PASSWORD_MESSAGE);
+      await expect(email).not.toHaveAttribute('aria-invalid', /.*/);
+      await expect(email).not.toHaveAttribute('aria-describedby', /.*/);
+    });
   });
 });

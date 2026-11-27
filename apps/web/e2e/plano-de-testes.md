@@ -28,12 +28,12 @@ Situação: `feito` (existe em `e2e/`) ou a tarefa da F01 que o entrega.
 | Sessão desconhecida                     | Cookie com token que a API não conhece; abrir `/`; termina em `/entrar` e o cookie some                                   | `sessao.spec.ts` | feito (T03)                    |
 | Shell da Home                           | Logada: Rail com "FC", "Início" ativo e iniciais; Sidebar "Clenio"; estado vazio                                          | `home.spec.ts`   | feito (T03)                    |
 | Tokens e fonte                          | Tema claro por padrão, escuro só com `data-theme="dark"`, Lato                                                            | `tokens.spec.ts` | feito (T02)                    |
-| Erros de preenchimento e falha no envio | E-mail vazio ou inválido, senha vazia; falha de rede no envio                                                             | `entrar.spec.ts` | F01-T04                        |
+| Erros de preenchimento e falha no envio | E-mail vazio ou inválido, senha vazia; falha de rede no envio                                                             | `entrar.spec.ts` | feito (T04) |
 | `?para=`                                | Abrir endereço logado sem sessão; entrar; cair nele; `//outro-site` cai na Home                                           | `para.spec.ts`   | F01-T05                        |
 | Continuar logada                        | Segunda aba; reabrir o navegador num contexto com os cookies; logada abre `/entrar` e vai à Home                          | `sessao.spec.ts` | F01-T06                        |
 | Sair                                    | Menu do avatar; "Sair do Clenio"; leva a `/entrar`; outra aba vai a `/entrar` na próxima ação; voltar não mostra conteúdo | `sair.spec.ts`   | F01-T07                        |
 | Tentativas demais                       | 5 falhas; a seguinte mostra o aviso; a senha certa também é recusada                                                      | `entrar.spec.ts` | F01-T08                        |
 | Erro de sessão                          | API fora do ar: "Não foi possível verificar sua sessão" e "Tentar de novo"                                                | `sessao.spec.ts` | F01-T09                        |
-| Teclado e acessibilidade                | Fluxo só por teclado; `@axe-core/playwright` em Entrar e Home sem violações                                               | `a11y.spec.ts`   | F01-T03 a T09, conforme a tela |
+| Teclado e acessibilidade                | Fluxo só por teclado; `@axe-core/playwright` em Entrar e Home sem violações                                               | `a11y.spec.ts`   | feito (T04, Entrar e Home); as demais telas, conforme a tarefa |
 
 Os testes de revogação e de tempo mexem nas linhas do banco no Arrange, como na API.
