@@ -1,6 +1,6 @@
 # LLD — Clenio Chat
 
-2026-11-28 · Clenio · Status: rascunho · HLD: [hld.md](hld.md)
+2026-11-29 · Clenio · Status: rascunho · HLD: [hld.md](hld.md)
 
 **Onde mora cada fato**
 
@@ -57,6 +57,7 @@ docs/             HLD, LLD, ADRs, brief
 | ORM e migrações do Banco do chat | TypeORM | [ADR 0018](adr/0018-typeorm-api-do-chat.md) |
 | Snapshot do contrato da API do chat | `@nestjs/swagger` | Gera o OpenAPI a partir do código |
 | Hash de senha | Argon2id, pela biblioteca `@node-rs/argon2` | Primeira recomendação da OWASP para senhas; a biblioteca traz binários prontos e não compila nada no contêiner |
+| Redefinir senha no comando de contas | `AccountsCommand` abre a transação (`DataSource.transaction`) e passa o `EntityManager` a `PeopleService.setPassword` e `SessionsService.revokeAll` | O hash novo e a revogação das Sessões valem juntos ou não valem; vale só para o comando, e a regra geral de transações continua a definir ("Transações") |
 | Testes de ponta a ponta do `web` | Playwright, só no Chromium em modo headless, com `@axe-core/playwright` | Prova os fluxos pela tela, com a web e a API reais, e é o único seam da web; o produto é só para navegador de desktop. Sem teste de unidade na web por enquanto |
 | Verificações do agente na web (validação visual, verificações exploratórias, console e rede) | Claude in Chrome, no Chrome da pessoa, contra `http://localhost:3000` | Mostra a tela real e lê o console e a rede para depurar; não prova critério repetível, que continua com o Playwright. O `playwright-cli` fica só para escrever e corrigir os testes |
 | Gerenciador dos projetos TypeScript | pnpm, um projeto por pasta, sem workspace | [ADR 0017](adr/0017-projetos-pnpm-independentes.md) |
@@ -268,7 +269,7 @@ de eventos do WebSocket estão a definir. As rotas já decididas:
 | Método e caminho | Situação | Comportamento |
 | --- | --- | --- |
 | API do chat: `POST /v1/sessions` | existe | Entrar: "Estados e regras", seção "Sessão e login" |
-| API do chat: `GET /v1/sessions/current` | existe (renovar a Sessão: planejada) | Verificar e renovar a Sessão: mesma seção |
+| API do chat: `GET /v1/sessions/current` | existe | Verificar e renovar a Sessão: mesma seção |
 | API do chat: `DELETE /v1/sessions/current` | planejada | Sair: mesma seção |
 | BFF: `GET /api/sessao/encerrar` | existe | Apaga o cookie de sessão e leva a `/entrar`, com o `?para=` quando ele é um caminho do chat, para quem recebe 401 (uma renderização não apaga cookie): "Cliente", "Sessão no cliente" |
 | BFF: Server Actions entrar e sair | planejada | Gravam e apagam o cookie: "Conceitos transversais de implementação", seção "Segurança" |

@@ -1,7 +1,9 @@
 import type { INestApplication } from '@nestjs/common';
 import { createHash } from 'node:crypto';
 import request from 'supertest';
+import { ConfigService } from '@nestjs/config';
 import { DataSource } from 'typeorm';
+import type { Env } from '../src/config/env.schema.js';
 import {
   createPerson,
   login,
@@ -9,7 +11,10 @@ import {
   TEST_PASSWORD,
 } from './support/auth-routes.js';
 import { createTestApp } from './support/create-test-app.js';
+import { ageSession, findSession } from './support/session-aging.js';
 import { uniqueEmail } from './support/unique-email.js';
+
+const DAY_MS = 24 * 60 * 60 * 1000;
 
 const INVALID_CREDENTIALS = {
   type: 'about:blank',
@@ -153,6 +158,60 @@ describe('Sessões', () => {
 
       expect(response.status).toBe(401);
       expect(response.body).toEqual(UNAUTHENTICATED);
+    });
+    it('renova a validade quando passou o intervalo de renovação', async () => {
+      const person = await createPerson(app);
+      const token = await login(app, person.email, person.password);
+      await ageSession(app, token, {
+        lastUsedAt: new Date(Date.now() - 25 * 60 * 60 * 1000),
+        expiresAt: new Date(Date.now() + DAY_MS),
+      });
+
+      const response = await request(app.getHttpServer())
+        .get('/v1/sessions/current')
+        .set('Cookie', sessionCookie(app, token));
+
+      const ttlDays = app
+        .get<ConfigService<Env, true>>(ConfigService)
+        .get('SESSION_TTL_DAYS', { infer: true });
+      const row = (await findSession(app, token))!;
+      expect(response.status).toBe(200);
+      expect(Math.abs(row.last_used_at.getTime() - Date.now())).toBeLessThan(
+        60_000,
+      );
+      expect(
+        Math.abs(row.expires_at.getTime() - (Date.now() + ttlDays * DAY_MS)),
+      ).toBeLessThan(60_000);
+    });
+
+    it('não grava nada antes do intervalo de renovação', async () => {
+      const person = await createPerson(app);
+      const token = await login(app, person.email, person.password);
+      const before = (await findSession(app, token))!;
+
+      const response = await request(app.getHttpServer())
+        .get('/v1/sessions/current')
+        .set('Cookie', sessionCookie(app, token));
+
+      const after = (await findSession(app, token))!;
+      expect(response.status).toBe(200);
+      expect(after).toEqual(before);
+    });
+
+    it('responde 401 unauthenticated e apaga a Sessão vencida', async () => {
+      const person = await createPerson(app);
+      const token = await login(app, person.email, person.password);
+      await ageSession(app, token, {
+        expiresAt: new Date(Date.now() - 60_000),
+      });
+
+      const response = await request(app.getHttpServer())
+        .get('/v1/sessions/current')
+        .set('Cookie', sessionCookie(app, token));
+
+      expect(response.status).toBe(401);
+      expect(response.body).toEqual(UNAUTHENTICATED);
+      expect(await findSession(app, token)).toBeNull();
     });
   });
 });

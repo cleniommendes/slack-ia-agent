@@ -60,9 +60,11 @@ Rode dentro do contêiner, a partir da raiz do repositório: `docker compose exe
 | `pnpm migration:run` | Roda as migrações pendentes no banco `chat` |
 | `pnpm migration:revert` | Reverte a última migração rodada |
 | `pnpm accounts create <e-mail> <nome>` | Comando de contas: cria a conta de uma Pessoa. A senha é lida do terminal, sem eco (precisa de TTY: `docker compose exec`, sem `-T`) |
+| `pnpm accounts reset-password <e-mail>` | Troca a senha de uma Pessoa, lida do terminal sem eco, e revoga todas as Sessões dela |
+| `pnpm accounts revoke-sessions <e-mail>` | Apaga todas as Sessões de uma Pessoa; a próxima ação dela em qualquer aba leva a "Entrar" |
+| `pnpm accounts purge-expired-sessions` | Apaga as Sessões vencidas |
 | `pnpm add <pacote>` | Instala uma dependência; nunca pelo host nem com `npm` |
 
-As outras operações do comando de contas entram com as tarefas que as usam (abaixo).
 
 ## Verificação completa
 
@@ -163,8 +165,9 @@ mesmos services de Pessoas e Sessões (`src/accounts/`). O `pnpm accounts` compi
 `dist-cli/` com o `tsc` e roda o `accounts.cli.js` de lá, porque o Nest precisa dos metadados dos
 decorators (o `tsx` não os emite) e o `nest build` apagaria o `dist/` de um `start:dev` aberto.
 
-Operações: `create` (existe), `reset-password`, `revoke-sessions` e `purge-expired-sessions`
-(planejadas, nas tarefas da F01 que as usam). A senha é lida do terminal sem eco, nunca de
+Operações: `create`, `reset-password`, `revoke-sessions` e `purge-expired-sessions`. O
+`reset-password` troca o hash e revoga as Sessões na mesma transação, aberta pelo
+`AccountsCommand`. A senha é lida do terminal sem eco, nunca de
 argumento nem de variável; sem terminal, o comando recusa. A leitura fica atrás de `PasswordPrompt`,
 que o teste de integração substitui.
 
