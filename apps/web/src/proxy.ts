@@ -16,7 +16,10 @@ export function proxy(request: NextRequest) {
   // O layout logado não tem a URL: o caminho segue num cabeçalho, sempre sobrescrito aqui.
   const headers = new Headers(request.headers);
   headers.set(REQUEST_PATH_HEADER, requestedPath);
-  return NextResponse.next({ request: { headers } });
+  const response = NextResponse.next({ request: { headers } });
+  // As telas logadas não ficam no cache do navegador: voltar pelo histórico depois de sair não as mostra.
+  response.headers.set('Cache-Control', 'no-store');
+  return response;
 }
 
 export const config = {

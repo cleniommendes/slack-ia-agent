@@ -10,7 +10,9 @@ test('mostra o shell da Home com as iniciais da Pessoa', async ({
     'aria-current',
     'page',
   );
-  await expect(rail.getByRole('img', { name: 'Ana Souza' })).toHaveText('AS');
+  await expect(
+    rail.getByRole('button', { name: 'AS, menu da conta de Ana Souza' }),
+  ).toHaveText('AS');
   await expect(page.getByRole('complementary')).toHaveText('Clenio');
   await expect(page.getByText('Nenhuma conversa ainda')).toBeVisible();
   await expect(

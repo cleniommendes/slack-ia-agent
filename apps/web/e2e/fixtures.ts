@@ -1,5 +1,11 @@
 import { randomUUID } from 'node:crypto';
-import { test as base, expect, type Page } from '@playwright/test';
+import {
+  test as base,
+  expect,
+  type Browser,
+  type BrowserContext,
+  type Page,
+} from '@playwright/test';
 import { Client } from 'pg';
 
 // O contêiner e2e só roda no ambiente local, então o banco fica escrito aqui (host = nome do serviço).
@@ -47,6 +53,32 @@ export async function revokeSessions(person: TestPerson) {
   } finally {
     await client.end();
   }
+}
+
+/** Quantas Sessões a Pessoa tem no banco `chat`. */
+export async function countSessions(person: TestPerson): Promise<number> {
+  const client = new Client({ connectionString: DATABASE_URL });
+  await client.connect();
+  try {
+    const result = await client.query(
+      'SELECT count(*)::int AS total FROM sessions JOIN people ON people.id = sessions.person_id WHERE people.email = $1',
+      [person.email],
+    );
+    return result.rows[0].total;
+  } finally {
+    await client.end();
+  }
+}
+
+/** Um segundo navegador: um contexto novo, logado pelo formulário como a Pessoa. */
+export async function signInInNewContext(
+  browser: Browser,
+  person: TestPerson,
+): Promise<{ context: BrowserContext; page: Page }> {
+  const context = await browser.newContext({ baseURL: 'http://web:3000' });
+  const page = await context.newPage();
+  await signInThroughForm(page, person);
+  return { context, page };
 }
 
 /** Entra pelo formulário da tela Entrar. É o único lugar que faz isso. */

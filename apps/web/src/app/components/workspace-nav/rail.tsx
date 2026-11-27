@@ -1,10 +1,10 @@
 import { House } from 'lucide-react';
 import Link from 'next/link';
-import { Avatar } from '@/app/components/ui/avatar';
+import { UserMenu } from './user-menu';
 
 type RailProps = { person: { id: string; name: string } };
 
-/** Trilho de seções, com o logo, "Início" ativo e o avatar da Pessoa. */
+/** Trilho de seções, com o logo, "Início" ativo e o menu da Pessoa no avatar. */
 export function Rail({ person }: RailProps) {
   return (
     <nav
@@ -27,7 +27,7 @@ export function Rail({ person }: RailProps) {
         Início
       </Link>
       <div className="flex-1" />
-      <Avatar id={person.id} name={person.name} />
+      <UserMenu person={person} />
     </nav>
   );
 }

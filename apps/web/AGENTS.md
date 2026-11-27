@@ -33,7 +33,8 @@ e o `plano.md` dela.
 | Tempo real | Socket.IO client | planejada (F03) |
 | Configuração | schema zod | planejada (T02) |
 | Testes | Playwright, só Chromium headless, com `@axe-core/playwright` | instalado |
-| Interface | `lucide-react`, `radix-ui`, `class-variance-authority` + `clsx` + `tailwind-merge`, `sonner`, Lato pelo `next/font` | a instalar, quando o primeiro componente precisar |
+| Interface | `lucide-react`, `radix-ui`, `class-variance-authority` + `clsx` + `tailwind-merge`, Lato pelo `next/font` | instalado |
+| Toasts | `sonner` | a instalar, quando o primeiro toast precisar |
 
 A stack de interface, com o porquê de cada peça, está no
 [design system](../../.claude/docs/design-system.md), "Stack de interface".
@@ -83,13 +84,15 @@ apps/web/src/app/
   config/env.ts         único lugar que lê process.env (schema zod); getEnv()
   entrar/               tela Entrar: page.tsx, entrar-form.tsx (client), actions.ts (signIn) e
                         sign-in-schema.ts (a validação, usada pelo formulário e pelo Server Action)
-  (app)/                telas logadas: layout.tsx verifica a Sessão na API; page.tsx é a Home (/)
+  (app)/                telas logadas: layout.tsx verifica a Sessão na API; page.tsx é a Home (/);
+                        actions.ts tem o Server Action de sair (signOut)
   api/sessao/encerrar/  route handler que apaga o cookie e leva a /entrar
   services/             services HTTP: o único lugar que chama a API do chat com fetch
   components/
     ui/                 primitivos, um arquivo por componente, em kebab-case (button.tsx); inclui
-                        form-message.tsx, a mensagem de erro do formulário
-    workspace-nav/      Rail e Sidebar; ainda virão user/, agent/, conversation/, message/...
+                        form-message.tsx (a mensagem de erro do formulário) e dropdown-menu.tsx (Radix)
+    workspace-nav/      Rail, Sidebar, user-menu.tsx (o menu do avatar) e reload-on-restore.tsx; ainda
+                        virão user/, agent/, conversation/, message/...
   utils/                cn.ts, initials.ts, session-cookie.ts, return-path.ts (a regra do ?para=)
 apps/web/e2e/           testes do Playwright, fixtures.ts e o plano-de-testes.md
 ```
@@ -108,7 +111,7 @@ apps/web/e2e/           testes do Playwright, fixtures.ts e o plano-de-testes.md
 - Componente nasce como Server Component. A página carrega os dados no servidor.
 - `"use client"` só onde há estado, evento ou API do navegador, no menor componente possível.
   Os primitivos que embrulham Radix (Dialog, DropdownMenu, Tooltip, Switch, Tabs) e o Toaster
-  são Client Components; os sem estado (Button, Avatar, CountBadge, Skeleton, EmptyState) não.
+  são Client Components (hoje: `dropdown-menu`, `user-menu` e `reload-on-restore`); os sem estado (Button, Avatar, CountBadge, Skeleton, EmptyState) não.
 - No cliente, o SWR guarda só as leituras que o tempo real altera (mensagens, não lidas,
   notificações). Cada evento do WebSocket atualiza esse cache direto, sem nova requisição.
 
